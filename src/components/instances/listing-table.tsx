@@ -1,5 +1,5 @@
-import { IInstance } from '@/models/IInstance';
-import { Edit, MoreHorizontal, Trash2 } from 'lucide-react';
+import { enumInstanceType, IInstance } from '@/models/IInstance';
+import { MoreHorizontal, Trash2 } from 'lucide-react';
 import { FC, useState } from 'react';
 import {
   AlertDialog,
@@ -11,6 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../ui/alert-dialog';
+import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import {
   DropdownMenu,
@@ -47,6 +48,7 @@ export const ListingTable: FC<ListingTableProps> = ({ instances, onDelete }) => 
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
+              <TableHead>Type</TableHead>
               <TableHead>GraphQL Endpoint</TableHead>
               <TableHead className="w-[80px]">Actions</TableHead>
             </TableRow>
@@ -63,9 +65,11 @@ export const ListingTable: FC<ListingTableProps> = ({ instances, onDelete }) => 
                 <TableRow key={instance.id}>
                   <TableCell className="font-medium">{instance.name}</TableCell>
                   <TableCell>
-                    <div className="flex items-center">Url</div>
+                    <Badge className="bg-gray-500">{instance.instanceType as enumInstanceType}</Badge>
                   </TableCell>
-                  <TableCell>Date</TableCell>
+                  <TableCell>
+                    <div className="flex items-center">{instance.graphQlEndpoint}</div>
+                  </TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -77,10 +81,6 @@ export const ListingTable: FC<ListingTableProps> = ({ instances, onDelete }) => 
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleDeleteClick(instance.id)}>
                           <Trash2 className="mr-2 h-4 w-4" />
                           Delete
