@@ -102,17 +102,11 @@ export const ContentTransferTool: FC<ContentTransferToolProps> = ({ instances })
 
       {activeInstance && (
         <Tabs defaultValue="export" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 border-b border-border bg-transparent">
-            <TabsTrigger
-              value="export"
-              className="relative bg-transparent px-4 pb-3 pt-2 font-medium text-muted-foreground data-[state=active]:text-foreground data-[state=active]:shadow-none before:absolute before:left-0 before:bottom-0 before:h-0.5 before:w-full before:scale-x-0 before:bg-foreground before:transition-transform data-[state=active]:before:scale-x-100"
-            >
+          <TabsList className="grid w-full grid-cols-2 border-b border-border">
+            <TabsTrigger value="export" className="">
               Export
             </TabsTrigger>
-            <TabsTrigger
-              value="import"
-              className="relative bg-transparent px-4 pb-3 pt-2 font-medium text-muted-foreground data-[state=active]:text-foreground data-[state=active]:shadow-none before:absolute before:left-0 before:bottom-0 before:h-0.5 before:w-full before:scale-x-0 before:bg-foreground before:transition-transform data-[state=active]:before:scale-x-100"
-            >
+            <TabsTrigger value="import" className="">
               Import
             </TabsTrigger>
           </TabsList>
