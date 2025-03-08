@@ -45,13 +45,13 @@ const data = {
       ],
     },
     {
-      title: 'Content Export Tool',
+      title: 'Content Export',
       url: '#',
       icon: FileDown,
       isActive: true,
       items: [
         {
-          title: 'Content Export',
+          title: 'Content Export Tool',
           url: '/contentexport',
         },
       ],

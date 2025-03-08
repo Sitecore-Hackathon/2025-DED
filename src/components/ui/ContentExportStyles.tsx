@@ -4,6 +4,15 @@ const ContentExportSearchStyles = (): JSX.Element => {
   return (
     <style>
       {`
+
+      .contentExportTool {
+        padding: 20px;
+      }
+
+      .advanced {
+      margin-bottom: 20px;
+      }
+
    .advanced.open-default .advanced-inner {
         display: block;
     }
@@ -74,13 +83,13 @@ const ContentExportSearchStyles = (): JSX.Element => {
             position: relative;
             vertical-align: top;
             width: 0.45em;
-            top: 0;
+            top: 8px;
             transform: rotate(135deg);
             margin-left: 5px;
         }
 
     .advanced.open a.advanced-btn:after {
-        top: 0.3em;
+        top: 8px;
         transform: rotate(-45deg);
     }
 

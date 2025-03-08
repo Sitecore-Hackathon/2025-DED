@@ -1,3 +1,4 @@
+'use client';
 import { AppSidebar } from '@/components/app-sidebar';
 import {
   Breadcrumb,
@@ -14,8 +15,12 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Separator } from '@radix-ui/react-separator';
+import { useState } from 'react';
 
 export default function InstanceSetupPage() {
+  const [configurationOpen, setConfigurationOpen] = useState<boolean>(true);
+  const [exportOpen, setExportOpen] = useState<boolean>(true);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -45,8 +50,18 @@ export default function InstanceSetupPage() {
           <ContentExportSearchStyles />
           <h1 className="text-2xl font-bold">Content Export Tool</h1>
 
-          <div className="advanced open open-default" id="divConfiguration">
-            <a className="advanced-btn">Configuration</a>
+          <div
+            className={
+              'advanced ' + (configurationOpen ? 'open open-default' : '')
+            }
+            id="divConfiguration"
+          >
+            <a
+              className="advanced-btn"
+              onClick={() => setConfigurationOpen(!configurationOpen)}
+            >
+              Configuration
+            </a>
             <div className="advanced-inner">
               <div className="inner-section">
                 <h3>Configuration</h3>
@@ -87,8 +102,16 @@ export default function InstanceSetupPage() {
             </div>
           </div>
 
-          <div className="advanced open open-default" id="divFilters">
-            <a className="advanced-btn">Export</a>
+          <div
+            className={'advanced ' + (exportOpen ? 'open open-default' : '')}
+            id="divConfiguration"
+          >
+            <a
+              className="advanced-btn"
+              onClick={() => setExportOpen(!exportOpen)}
+            >
+              Export
+            </a>
             <div className="advanced-inner">
               <div className="inner-section">
                 <h3>Export</h3>
