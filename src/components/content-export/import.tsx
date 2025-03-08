@@ -33,7 +33,11 @@ export const ImportTool: FC<ImportToolProps> = ({ activeInstance }) => {
       complete: function (results) {
         console.log(results.data);
 
-        PostMutationQuery(activeInstance?.graphQlEndpoint, activeInstance?.apiToken, results.data);
+        if (isUpdate) {
+          PostMutationQuery(true, activeInstance?.graphQlEndpoint, activeInstance?.apiToken, results.data);
+        } else if (isCreate) {
+          PostMutationQuery(false, activeInstance?.graphQlEndpoint, activeInstance?.apiToken, results.data);
+        }
       },
     });
   };
@@ -129,19 +133,19 @@ export const ImportTool: FC<ImportToolProps> = ({ activeInstance }) => {
               <p>Required CSV columns for updating items:</p>
               <ul className="list-disc pl-4 space-y-1">
                 <li>
-                  <strong>Item Path</strong> - Parent item location
+                  <strong>Item Path</strong> - Item path string e.g. /sitecore/content/Home
                 </li>
               </ul>
               <p>Required CSV columns for new items:</p>
               <ul className="list-disc pl-4 space-y-1">
                 <li>
-                  <strong>Item Path</strong> - Parent item location
+                  <strong>Item Path</strong> - Parent item ID (GUID)
                 </li>
                 <li>
-                  <strong>Template</strong> - Item template
+                  <strong>Template</strong> - Item template (GUID)
                 </li>
                 <li>
-                  <strong>Name</strong> - Item name
+                  <strong>Name</strong> - Item name (string)
                 </li>
               </ul>
 

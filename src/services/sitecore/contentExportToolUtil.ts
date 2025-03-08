@@ -1,5 +1,5 @@
 import { GetSearchQuery } from './createGqlQuery';
-import { UpdateQueryTemplate } from './updateTemplate.query';
+import { CreateQueryTemplate, UpdateQueryTemplate } from './updateTemplate.query';
 
 export const GetContentExportResults = (
   gqlEndpoint?: string,
@@ -92,7 +92,10 @@ export const GetContentExportResults = (
     });
 };
 
-export const PostMutationQuery = (gqlEndpoint?: string, authToken?: string, csvData?: any[]): void => {
+let errorHasBeenDisplayed = false;
+
+export const PostMutationQuery = (update: boolean, gqlEndpoint?: string, authToken?: string, csvData?: any[]): void => {
+  errorHasBeenDisplayed = false;
   // show loading modal
   const loadingModal = document.getElementById('loading-modal');
   if (loadingModal) {
@@ -113,22 +116,40 @@ export const PostMutationQuery = (gqlEndpoint?: string, authToken?: string, csvD
 
   // iterate through requests
   for (var i = 0; i < csvData.length; i++) {
-    let query = UpdateQueryTemplate;
+    let query = '';
+
+    if (update) {
+      query = UpdateQueryTemplate;
+    } else {
+      query = CreateQueryTemplate;
+    }
 
     const row = csvData[i];
+    // basic data
     query = query.replace('pathFragment', row['Item Path']);
+    query = query.replace('ItemName', row['Name']);
+    query = query.replace('ItemTemplate', row['Template']);
+
+    if (!update && (!row['Item Path'] || !row['Name'] || !row['Template'])) {
+      alert('Missing required columns. Please make sure your CSV includes columns for Item Path, Template, and Name');
+      if (loadingModal) {
+        loadingModal.style.display = 'none';
+      }
+      return;
+    }
 
     if (row['Language']) {
       const languageFragment = `language: "` + row['Language'] + `"`;
-      query.replace('languageFragment', languageFragment);
+      query = query.replace('languageFragment', languageFragment);
     } else {
-      query.replace('languageFragment', '');
+      query = query.replace('languageFragment', '');
     }
 
     let fieldFragments = '';
     for (var property in row) {
       if (
         property === 'Item Path' ||
+        property === 'Template' ||
         property === 'ID' ||
         property === 'Name' ||
         property === 'Language' ||
@@ -170,7 +191,6 @@ export const PostMutationQuery = (gqlEndpoint?: string, authToken?: string, csvD
   );
 };
 
-let errorHasBeenDisplayed = false;
 export const PostUpdateQuery = (gqlEndpoint: string, authToken: string, jsonQuery: string) => {
   fetch(gqlEndpoint, {
     method: 'POST',
