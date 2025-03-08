@@ -113,16 +113,18 @@ Example files:
 
 [Create Content](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/exampleFiles/Import-Create.csv)
 
-1. Get an Auth Token for your
-2. Follow the In App Configuration section, configure an **authoring API endpoing endpoint**, e.g. https://mysite.sc/sitecore/api/authoring/graphql/v1/
+1. Following the In App Configuration section, configure an **authoring API endpoing endpoint**, e.g. https://mysite.sc/sitecore/api/authoring/graphql/v1/
 
    ![Instance Configuration](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/AuthoringSetup.png)
 
-3. Navigate to the Content Export Tool (/Content/Export)
-4. Select your Instance from the dropdown
-5. Enter your filters
-   - Start Item(s): One of more item IDs specifying where to pull content from, separated by comma. Defaults to the full content tree
-   - Templates: One or more template ID to specify what types of items to export
-   - Fields: All of the fields that you want included in the export. Null/invalid fields will return "n/a" in the export, so you can include fields that do not exist on all items
-     ![Export Page](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/Export.png)
-6. Click Run Export and wait for your CSV to download!
+2. Navigate to the Content Export Tool (/Content/Export)
+3. Select your Instance from the dropdown
+4. Select the Import tab
+5. Upload a CSV file
+   - Required columns:
+     - Update: Item Path
+     - Create: Item Path, Template, Name
+6. Select Update (default) or Create
+7. Click Import
+8. The post requests to the authoring API do not currently work due to a CORS error, but you can see the generate GraphQL queries in the Console
+   ![Import Page](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/Import.png)
