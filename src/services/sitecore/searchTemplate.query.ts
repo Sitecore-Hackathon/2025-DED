@@ -15,7 +15,7 @@ export const SearchQueryTemplate = `
                 }
             ]
         }
-        first: 250
+        first: 1000
         ) {
         total
         pageInfo {
