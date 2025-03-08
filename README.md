@@ -65,6 +65,18 @@ To run the application locally, using Node, run the following commands:
    ```
 4. Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
 
+### Setting Up Your Sitecore Instance
+
+TODO: Dan drop details on what someone would need to do to connect this app with their own XP/XM instance.
+[ ] - Add Identity Server Configuration Required
+[ ] - Add details on the
+[ ] - You can optionally talk about the `Generate Token` script here
+[ ] - Any cors settings that need to be set up
+
+⟹ If there are any custom configuration that has to be set manually then remember to add all details here.
+
+_Remove this subsection if your entry does not require any configuration that is not fully covered in the installation instructions already_
+
 ## Using the Application
 
 ### In App Configuration
@@ -79,20 +91,6 @@ From within the application:
      - Once you've clicked the button, select the product, and fill in the fields.
    - If you are using XP or XM and do not currently have an access token, select the `Generate Token` button and fill in the required fields. If you have done so already, check out the section below on how to set up your Sitecore instance. This will be required to generate the token.
 3. Once you have added atleast one instance, you can now use the `Export Tool` or `Copilot` pages to start working with your content.
-
-### Setting Up Your Sitecore Instance
-
-TODO: Dan drop details on what someone would need to do to connect this app with their own XP/XM instance.
-[ ] - Add Identity Server Configuration Required
-[ ] - Add details on the
-[ ] - You can optionally talk about the `Generate Token` script here
-[ ] - Any cors settings that need to be set up
-
-⟹ If there are any custom configuration that has to be set manually then remember to add all details here.
-
-_Remove this subsection if your entry does not require any configuration that is not fully covered in the installation instructions already_
-
-## Usage instructions
 
 ### Content Export:
 
