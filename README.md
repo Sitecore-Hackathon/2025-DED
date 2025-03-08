@@ -12,13 +12,11 @@ The Unicategory
 
 ## Description
 
-⟹ Write a clear description of your hackathon entry.
+CONTENT EXPORT TOOL FOR XM CLOUD
 
-- Module Purpose
-- What problem was solved (if any)
-  - How does this module solve it
+The purpose of this module is to enable Sitecore authors (with limited technical ability) to flexibly and easily export content in bulk from Sitecore, using a user friendly UI that enables them to export any configuration of item and fields (no need to write Powershell scripts).
 
-_You can alternately paste a [link here](#docs) to a document within this repo containing the description._
+The [Content Export Tool](https://github.com/estockwell-alpert/ContentExportTool), created in 2018, is a .NET Sitecore module that provided these features, but the module is not compatible with XM Cloud since XM Cloud does not allow customizations to the CM file system. This project recreates the Content Export Tool as a standalone Node application that runs in the browser and communicates with the user's XM Cloud or XP instance through the GraphQL API, and introduces new AI features using Copilot.
 
 ## Video link
 
@@ -30,9 +28,7 @@ _You can alternately paste a [link here](#docs) to a document within this repo c
 
 ⟹ Does your module rely on other Sitecore modules or frameworks?
 
-- List any dependencies
-- Or other modules that must be installed
-- Or services that must be enabled/configured
+No!
 
 _Remove this subsection if your entry does not have any prerequisites other than Sitecore_
 
@@ -71,28 +67,6 @@ To run the application locally, using Node, run the following commands:
    ```
 4. Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
 
-⟹ Write a short clear step-wise instruction on how to install your module.
-
-> _A simple well-described installation process is required to win the Hackathon._  
-> Feel free to use any of the following tools/formats as part of the installation:
->
-> - Sitecore Package files
-> - Docker image builds
-> - Sitecore CLI
-> - msbuild
-> - npm / yarn
->
-> _Do not use_
->
-> - TDS
-> - Unicorn
-
-for example:
-
-1. Use the Sitecore Installation wizard to install the [package](#link-to-package)
-2. ...
-3. profit
-
 ### In App Configuration
 
 If using the production environment (https://sitecore-content-export.vercel.app), or if you've completed the local development server setup, you'll need to configure instances within the app. Think of these as "connections" to your Sitecore instances.
@@ -118,33 +92,32 @@ TODO: Dan drop details on what someone would need to do to connect this app with
 
 _Remove this subsection if your entry does not require any configuration that is not fully covered in the installation instructions already_
 
-<details>
-
 ## Usage instructions
 
-⟹ Provide documentation about your module, how do the users use your module, where are things located, what do the icons mean, are there any secret shortcuts etc.
+### Content Export:
 
-Include screenshots where necessary. You can add images to the `./images` folder and then link to them from your documentation:
+1. Follow the In App Configuration section to to configure your instance settings
+   ![Instance Configuration](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/InstanceConfiguration.png)
+2. Navigate to the Content Export Tool (/Content/Export)
+3. Select your Instance from the dropdown
+4. Enter your filters
+   - Start Item(s): One of more item IDs specifying where to pull content from, separated by comma. Defaults to the full content tree
+   - Templates: One or more template ID to specify what types of items to export
+   - Fields: All of the fields that you want included in the export. Null/invalid fields will return "n/a" in the export, so you can include fields that do not exist on all items
+     ![Export Page](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/Export.png)
+5. Click Run Export and wait for your CSV to download!
 
-![Hackathon Logo](docs/images/hackathon.png?raw=true 'Hackathon Logo')
+### Content Import:
 
-You can embed images of different formats too:
+1. Follow the In App Configuration section, configure an **authoring API endpoing endpoint**, e.g. https://mysite.sc/sitecore/api/authoring/graphql/v1/
 
-![Deal With It](docs/images/deal-with-it.gif?raw=true 'Deal With It')
+   ![Instance Configuration](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/AuthoringSetup.png)
 
-And you can embed external images too:
-
-![Random](https://thiscatdoesnotexist.com/)
-
-## Comments
-
-If you'd like to make additional comments that is important for your module entry.
-
-- MUST READ: **[Submission requirements](SUBMISSION_REQUIREMENTS.md)**
-- [Entry form template](ENTRYFORM.md)
-
-### ⟹ [Insert your documentation here](ENTRYFORM.md)
-
-- Dylan Test Push
-- Dan Test Push
-</details>
+2. Navigate to the Content Export Tool (/Content/Export)
+3. Select your Instance from the dropdown
+4. Enter your filters
+   - Start Item(s): One of more item IDs specifying where to pull content from, separated by comma. Defaults to the full content tree
+   - Templates: One or more template ID to specify what types of items to export
+   - Fields: All of the fields that you want included in the export. Null/invalid fields will return "n/a" in the export, so you can include fields that do not exist on all items
+     ![Export Page](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/Export.png)
+5. Click Run Export and wait for your CSV to download!

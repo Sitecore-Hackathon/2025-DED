@@ -1,5 +1,5 @@
 import { GetSearchQuery } from './createGqlQuery';
-import { UpdateQueryTemplate } from './updateTemplate.query';
+import { CreateQueryTemplate, UpdateQueryTemplate } from './updateTemplate.query';
 
 export const GenerateContentExport = (
   gqlEndpoint?: string,
@@ -85,6 +85,7 @@ export const GenerateContentExport = (
     })
     .catch((error) => {
       console.error('Error:', error);
+      alert('Something went wrong. Check the console for errors');
       if (loadingModal) {
         loadingModal.style.display = 'none';
       }
@@ -157,14 +158,15 @@ export const GetContentExportResults = async (
   }
 };
 
-export const PostMutationQuery = (gqlEndpoint?: string, authToken?: string, csvData?: any[]): void => {
+let errorHasBeenDisplayed = false;
+
+export const PostMutationQuery = (update: boolean, gqlEndpoint?: string, authToken?: string, csvData?: any[]): void => {
+  errorHasBeenDisplayed = false;
   // show loading modal
   const loadingModal = document.getElementById('loading-modal');
   if (loadingModal) {
     loadingModal.style.display = 'block';
   }
-
-  //const query = GetSearchQuery(gqlEndpoint, gqlApiKey, startItem, templates, fields);
 
   if (!gqlEndpoint || !authToken) {
     alert('Select an Instance with an Auth token');
@@ -180,25 +182,40 @@ export const PostMutationQuery = (gqlEndpoint?: string, authToken?: string, csvD
 
   // iterate through requests
   for (var i = 0; i < csvData.length; i++) {
-    let query = UpdateQueryTemplate;
+    let query = '';
+
+    if (update) {
+      query = UpdateQueryTemplate;
+    } else {
+      query = CreateQueryTemplate;
+    }
 
     const row = csvData[i];
+    // basic data
     query = query.replace('pathFragment', row['Item Path']);
+    query = query.replace('ItemName', row['Name']);
+    query = query.replace('ItemTemplate', row['Template']);
+
+    if (!update && (!row['Item Path'] || !row['Name'] || !row['Template'])) {
+      alert('Missing required columns. Please make sure your CSV includes columns for Item Path, Template, and Name');
+      if (loadingModal) {
+        loadingModal.style.display = 'none';
+      }
+      return;
+    }
 
     if (row['Language']) {
       const languageFragment = `language: "` + row['Language'] + `"`;
-      query.replace('languageFragment', languageFragment);
+      query = query.replace('languageFragment', languageFragment);
     } else {
-      query.replace('languageFragment', '');
+      query = query.replace('languageFragment', '');
     }
 
     let fieldFragments = '';
     for (var property in row) {
-      console.log(property);
-      console.log(row[property]);
-
       if (
-        property === 'Item Name' ||
+        property === 'Item Path' ||
+        property === 'Template' ||
         property === 'ID' ||
         property === 'Name' ||
         property === 'Language' ||
@@ -229,14 +246,18 @@ export const PostMutationQuery = (gqlEndpoint?: string, authToken?: string, csvD
     queries.push(jsonQuery);
   }
 
-  Promise.all(queries.map((query) => PostUpdateQuery(gqlEndpoint, authToken, JSON.stringify(query)))).then((results) =>
-    results.forEach((result) => console.log(result))
+  Promise.all(queries.map((query) => PostUpdateQuery(gqlEndpoint, authToken, JSON.stringify(query)))).then(
+    (results) => {
+      if (loadingModal) {
+        loadingModal.style.display = 'none';
+      }
+
+      results.forEach((result) => console.log(result));
+    }
   );
 };
 
 export const PostUpdateQuery = (gqlEndpoint: string, authToken: string, jsonQuery: string) => {
-  const loadingModal = document.getElementById('loading-modal');
-
   fetch(gqlEndpoint, {
     method: 'POST',
     headers: new Headers({ Authorization: 'Bearer ' + authToken, 'content-type': 'application/json' }),
@@ -250,8 +271,10 @@ export const PostUpdateQuery = (gqlEndpoint: string, authToken: string, jsonQuer
     })
     .catch((error) => {
       console.error('Error:', error);
-      if (loadingModal) {
-        loadingModal.style.display = 'none';
+
+      if (!errorHasBeenDisplayed) {
+        alert('Something went wrong. Check the console for errors.');
       }
+      errorHasBeenDisplayed = true;
     });
 };

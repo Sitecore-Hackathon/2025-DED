@@ -14,15 +14,14 @@ interface ImportToolProps {
 
 export const ImportTool: FC<ImportToolProps> = ({ activeInstance }) => {
   const [selectedFile, setSelectedFile] = useState<File>();
+  const [isUpdate, setIsUpdate] = useState<boolean>(true);
+  const [isCreate, setIsCreate] = useState<boolean>(false);
   const onFileChange = (event: any) => {
     // Update the state
     setSelectedFile(event.target.files[0]);
   };
 
   const onFileUpload = () => {
-    // Create an object of formData
-    const formData = new FormData();
-
     if (!selectedFile) {
       alert('No file selected');
       return;
@@ -34,7 +33,11 @@ export const ImportTool: FC<ImportToolProps> = ({ activeInstance }) => {
       complete: function (results) {
         console.log(results.data);
 
-        PostMutationQuery(activeInstance?.graphQlEndpoint, activeInstance?.apiToken, results.data);
+        if (isUpdate) {
+          PostMutationQuery(true, activeInstance?.graphQlEndpoint, activeInstance?.apiToken, results.data);
+        } else if (isCreate) {
+          PostMutationQuery(false, activeInstance?.graphQlEndpoint, activeInstance?.apiToken, results.data);
+        }
       },
     });
   };
@@ -67,7 +70,11 @@ export const ImportTool: FC<ImportToolProps> = ({ activeInstance }) => {
     <Card className="rounded-sm border bg-card">
       <CardHeader>
         <CardTitle>Import Content</CardTitle>
-        <CardDescription>Import content from CSV files into your Sitecore instance</CardDescription>
+        <CardDescription>
+          Import content from CSV files into your Sitecore instance <br />
+          <b>Note</b>: At this time, Import is not working because requests to the GraphQL Authoring API are blocked by
+          CORS policy. However, you can see the generated mutation queries logged in the browser.
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -88,20 +95,57 @@ export const ImportTool: FC<ImportToolProps> = ({ activeInstance }) => {
           </div>
         )}
 
+        <div className="importOptions">
+          <div className="radio">
+            <label>
+              <input
+                type="radio"
+                value="update"
+                checked={isUpdate}
+                onChange={() => {
+                  setIsUpdate(true);
+                  setIsCreate(false);
+                }}
+              />
+              Update
+            </label>
+          </div>
+          <div className="radio">
+            <label>
+              <input
+                type="radio"
+                value="create"
+                checked={isCreate}
+                onChange={() => {
+                  setIsCreate(true);
+                  setIsUpdate(false);
+                }}
+              />
+              Create
+            </label>
+          </div>
+        </div>
+
         <Alert>
           <AlertDescription>
             <div className="space-y-4">
               <h3 className="font-medium">Getting Started</h3>
+              <p>Required CSV columns for updating items:</p>
+              <ul className="list-disc pl-4 space-y-1">
+                <li>
+                  <strong>Item Path</strong> - Item path string e.g. /sitecore/content/Home
+                </li>
+              </ul>
               <p>Required CSV columns for new items:</p>
               <ul className="list-disc pl-4 space-y-1">
                 <li>
-                  <strong>Item Path</strong> - Parent item location
+                  <strong>Item Path</strong> - Parent item ID (GUID)
                 </li>
                 <li>
-                  <strong>Template</strong> - Item template
+                  <strong>Template</strong> - Item template (GUID)
                 </li>
                 <li>
-                  <strong>Name</strong> - Item name
+                  <strong>Name</strong> - Item name (string)
                 </li>
               </ul>
 

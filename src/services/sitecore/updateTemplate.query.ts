@@ -2,7 +2,7 @@ export const UpdateQueryTemplate = `
 mutation UpdateItem {
     updateItem(
         input: {
-            path: pathFragment
+            path: "pathFragment"
             languageFragment
             fields: [
                 fieldsFragment
@@ -15,3 +15,30 @@ mutation UpdateItem {
             }
             }
         }`;
+
+export const CreateQueryTemplate = `
+mutation {
+  createItem(
+    input: {
+      name: "ItemName"
+      templateId: "ItemTemplate"
+      parent: "pathFragment"
+      languageFragment
+      fields: [
+        fieldsFragment
+      ]
+    }
+  ) {
+    item {
+      itemId
+      name
+      path
+      fields(ownFields: true, excludeStandardFields: true) {
+        nodes {
+          name
+          value
+        }
+      }
+    }
+  }
+}`;

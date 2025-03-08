@@ -562,6 +562,14 @@ span.api-message {
   animation: spin 2s linear infinite;
 }
 
+.fixed {
+  z-index: 9;
+}
+
+#loading-modal {
+  z-index: 9;
+}
+
 .loading-modal {
   display: none;
   width: 100%;

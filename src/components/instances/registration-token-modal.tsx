@@ -101,22 +101,39 @@ export const RegistrationTokenModal = ({ open, onOpenChange, onSubmit }: Instanc
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="graphQlEndpoint"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>GraphQL Endpoint</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://xmc-*.sitecorecloud.io/sitecore/api/graph/edge/ide/" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {instanceType === enumInstanceType.xp ? (
+              <FormField
+                control={form.control}
+                name="graphQlEndpoint"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>GraphQL Endpoint</FormLabel>
+                    <FormControl>
+                      <Input placeholder="https://xmc-*.sitecorecloud.io/sitecore/api/graph/items/master" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : (
+              <></>
+            )}
 
             {instanceType === enumInstanceType.xmc ? (
               <>
+                <FormField
+                  control={form.control}
+                  name="graphQlEndpoint"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>GraphQL Endpoint</FormLabel>
+                      <FormControl>
+                        <Input placeholder="https://xmc-*.sitecorecloud.io/sitecore/api/graph/edge/ide/" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="clientId"
@@ -166,6 +183,29 @@ export const RegistrationTokenModal = ({ open, onOpenChange, onSubmit }: Instanc
               </Button>
               <Button type="submit">Register Instance</Button>
             </DialogFooter>
+
+            <DialogDescription>
+              To create a Content API endpoint, enter a GraphQL content API endpoint (e.g.
+              https://mysite.com/sitecore/api/graph/items/master or https://edge.sitecorecloud.io/api/graphql/v1) and
+              your{' '}
+              <a
+                href="https://ericastockwellalpert.wordpress.com/2025/02/03/setting-up-the-sitecore-graphql-api-and-playground-in-xp/"
+                target="_blank"
+              >
+                sc_apikey
+              </a>{' '}
+              e.g. A9123800-72E8-4182-9567-D5C35C7D3A93
+              <br /> <br />
+              To create an Authoring endpoint, enter a GraphQL authoring API endpoint e.g.
+              https://mysite.com/sitecore/api/authoring/graphql/v1/ and your{' '}
+              <a
+                target="_blank"
+                href="https://ericastockwellalpert.wordpress.com/2025/02/21/setting-up-the-graphql-authoring-api-obtaining-an-authorization-token-through-an-mvc-controller-in-a-custom-applicaton/"
+              >
+                Auth Token
+              </a>{' '}
+              e.g. eyJhbGciOiJSUzI1NiIsImtpZ......
+            </DialogDescription>
           </form>
         </Form>
       </DialogContent>
