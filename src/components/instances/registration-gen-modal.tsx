@@ -8,16 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { IInstance } from '@/models/IInstance';
+import { enumInstanceType, IInstance } from '@/models/IInstance';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -25,22 +18,12 @@ import { z } from 'zod';
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
   identityServerUrl: z.string().url({ message: 'Please enter a valid URL' }),
-  sitecoreUsername: z
-    .string()
-    .min(2, { message: 'Username must be at least 2 characters' }),
-  sitecorePassword: z
-    .string()
-    .min(5, { message: 'Password must be at least 5 characters' }),
-  clientId: z
-    .string()
-    .min(2, { message: 'Client ID must be at least 2 characters' }),
-  clientSecret: z
-    .string()
-    .min(2, { message: 'Client Secret must be at least 2 characters' }),
+  sitecoreUsername: z.string().min(2, { message: 'Username must be at least 2 characters' }),
+  sitecorePassword: z.string().min(5, { message: 'Password must be at least 5 characters' }),
+  clientId: z.string().min(2, { message: 'Client ID must be at least 2 characters' }),
+  clientSecret: z.string().min(2, { message: 'Client Secret must be at least 2 characters' }),
   graphQlEndpoint: z.string().url({ message: 'Please enter a valid URL' }),
-  apiToken: z
-    .string()
-    .min(5, { message: 'API token must be at least 5 characters' }),
+  apiToken: z.string().min(5, { message: 'API token must be at least 5 characters' }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -51,11 +34,7 @@ interface InstanceRegistrationModalProps {
   onSubmit: (values: Omit<IInstance, 'id'>) => void;
 }
 
-export const RegistrationGenModal = ({
-  open,
-  onOpenChange,
-  onSubmit,
-}: InstanceRegistrationModalProps) => {
+export const RegistrationGenModal = ({ open, onOpenChange, onSubmit }: InstanceRegistrationModalProps) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -71,7 +50,12 @@ export const RegistrationGenModal = ({
   });
 
   const handleSubmit = (values: FormValues) => {
-    onSubmit(values);
+    // TODO: Take passed in values to get back Accesstoken
+
+    onSubmit({
+      ...values,
+      instanceType: enumInstanceType.xp,
+    });
     form.reset();
   };
 
@@ -80,17 +64,11 @@ export const RegistrationGenModal = ({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Register New Instance</DialogTitle>
-          <DialogDescription>
-            Fill in the details to register a new instance to your
-            configuration.
-          </DialogDescription>
+          <DialogDescription>Fill in the details to register a new instance to your configuration.</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6"
-          >
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="name"
@@ -112,10 +90,7 @@ export const RegistrationGenModal = ({
                 <FormItem>
                   <FormLabel>Identity Server URL</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="https://identity.example.com"
-                      {...field}
-                    />
+                    <Input placeholder="https://identity.example.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -143,11 +118,7 @@ export const RegistrationGenModal = ({
                 <FormItem>
                   <FormLabel>Sitecore Password</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="sitecore-password"
-                      {...field}
-                    />
+                    <Input type="password" placeholder="sitecore-password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -175,11 +146,7 @@ export const RegistrationGenModal = ({
                 <FormItem>
                   <FormLabel>Client Secret</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="client-secret"
-                      {...field}
-                    />
+                    <Input type="password" placeholder="client-secret" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -193,10 +160,7 @@ export const RegistrationGenModal = ({
                 <FormItem>
                   <FormLabel>GraphQL Endpoint</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="https://example.com/graphql"
-                      {...field}
-                    />
+                    <Input placeholder="https://example.com/graphql" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -218,11 +182,7 @@ export const RegistrationGenModal = ({
             />
 
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
               <Button type="submit">Register Instance</Button>

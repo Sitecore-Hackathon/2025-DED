@@ -10,15 +10,19 @@ import {
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { IInstance } from '@/models/IInstance';
+import { enumInstanceType, IInstance } from '@/models/IInstance';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
+  instanceType: z.nativeEnum(enumInstanceType, { message: 'Please select an instance type' }),
   graphQlEndpoint: z.string().url({ message: 'Please enter a valid URL' }),
-  apiToken: z.string().min(5, { message: 'API token must be at least 5 characters' }),
+  clientId: z.string(),
+  clientSecret: z.string(),
+  apiToken: z.string(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -34,10 +38,16 @@ export const RegistrationTokenModal = ({ open, onOpenChange, onSubmit }: Instanc
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
+      instanceType: enumInstanceType.xmc,
+      clientId: '',
+      clientSecret: '',
       graphQlEndpoint: '',
       apiToken: '',
     },
   });
+
+  // Add this line to watch the instanceType field
+  const instanceType = form.watch('instanceType');
 
   const handleSubmit = (values: FormValues) => {
     onSubmit(values);
@@ -46,14 +56,37 @@ export const RegistrationTokenModal = ({ open, onOpenChange, onSubmit }: Instanc
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Register New Instance</DialogTitle>
-          <DialogDescription>Fill in the details to register a new instance to your configuration.</DialogDescription>
+          <DialogDescription>
+            This form assumes you've already generated a token from XM Cloud or generated a Token from Sitecore XP/XM.
+          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="instanceType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Instance Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select instance type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value={enumInstanceType.xmc}>Sitecore XM Cloud</SelectItem>
+                      <SelectItem value={enumInstanceType.xp}>Sitecore XM/XP</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="name"
@@ -73,28 +106,59 @@ export const RegistrationTokenModal = ({ open, onOpenChange, onSubmit }: Instanc
               name="graphQlEndpoint"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL</FormLabel>
+                  <FormLabel>GraphQL Endpoint</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://example.com" {...field} />
+                    <Input placeholder="https://xmc-*.sitecorecloud.io/sitecore/api/graph/edge/ide/" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="apiToken"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>API Key</FormLabel>
-                  <FormControl>
-                    <Input placeholder="api-key-xxxxx" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {instanceType === enumInstanceType.xmc ? (
+              <>
+                <FormField
+                  control={form.control}
+                  name="clientId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Client ID</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter client ID" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="clientSecret"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Client Secret</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Enter client secret" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            ) : (
+              <FormField
+                control={form.control}
+                name="apiToken"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>API Key</FormLabel>
+                    <FormControl>
+                      <Input placeholder="api-key-xxxxx" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
