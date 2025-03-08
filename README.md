@@ -12,7 +12,7 @@ The Unicategory
 
 ## Description
 
-CONTENT EXPORT TOOL FOR XM CLOUD
+### Content Export Tool for XM Cloud
 
 The purpose of this module is to enable Sitecore authors (with limited technical ability) to flexibly and easily export content in bulk from Sitecore, using a user friendly UI that enables them to export any configuration of item and fields (no need to write Powershell scripts).
 
@@ -26,11 +26,7 @@ The [Content Export Tool](https://github.com/estockwell-alpert/ContentExportTool
 
 ## Pre-requisites and Dependencies
 
-⟹ Does your module rely on other Sitecore modules or frameworks?
-
-No!
-
-_Remove this subsection if your entry does not have any prerequisites other than Sitecore_
+- Docker Desktop
 
 ## Installation instructions
 
@@ -47,6 +43,8 @@ Run these steps in PowerShell:
 ### Running this Application
 
 You can see the application running by visiting our production instance here: [https://sitecore-content-export.vercel.app](https://sitecore-content-export.vercel.app).
+
+You can connect to application to https://edge.sitecorecloud.io, any Sitecore instance with an available GraphQL endpoint, or set up a new Sitecore instance for testing using the Docker steps above! If you want to try the application without any local setup, use the Vercel link above with any valid GraphQL endpoint or Edge.
 
 To run the application locally, using Node, run the following commands:
 
@@ -109,15 +107,16 @@ _Remove this subsection if your entry does not require any configuration that is
 
 ### Content Import:
 
+1. Get an Auth Token for your
 1. Follow the In App Configuration section, configure an **authoring API endpoing endpoint**, e.g. https://mysite.sc/sitecore/api/authoring/graphql/v1/
 
    ![Instance Configuration](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/AuthoringSetup.png)
 
-2. Navigate to the Content Export Tool (/Content/Export)
-3. Select your Instance from the dropdown
-4. Enter your filters
+1. Navigate to the Content Export Tool (/Content/Export)
+1. Select your Instance from the dropdown
+1. Enter your filters
    - Start Item(s): One of more item IDs specifying where to pull content from, separated by comma. Defaults to the full content tree
    - Templates: One or more template ID to specify what types of items to export
    - Fields: All of the fields that you want included in the export. Null/invalid fields will return "n/a" in the export, so you can include fields that do not exist on all items
      ![Export Page](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/Export.png)
-5. Click Run Export and wait for your CSV to download!
+1. Click Run Export and wait for your CSV to download!

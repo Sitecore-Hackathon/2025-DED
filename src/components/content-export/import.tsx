@@ -156,7 +156,7 @@ export const ImportTool: FC<ImportToolProps> = ({ activeInstance }) => {
                 <ul className="list-disc pl-4 space-y-1 text-sm">
                   <li>Review all modified items before publishing</li>
                   <li>Only CSV format is supported</li>
-                  <li>Paths can be full Sitecore path or GUID</li>
+                  <li>Item Path must be string for Update, GUID for Create</li>
                   <li>Supports string, image, and link fields</li>
                   <li>Add Language column for specific versions</li>
                 </ul>
