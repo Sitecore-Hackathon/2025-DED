@@ -16,10 +16,43 @@ import {
 } from '@/components/ui/sidebar';
 import { Separator } from '@radix-ui/react-separator';
 import { useState } from 'react';
+import { GetGqlQuery } from '../Util/CreateGQLQuery';
 
 export default function InstanceSetupPage() {
   const [configurationOpen, setConfigurationOpen] = useState<boolean>(true);
   const [exportOpen, setExportOpen] = useState<boolean>(true);
+  const [gqlEndpoint, setGqlEndpoint] = useState<string>();
+  const [gqlApiKey, setGqlApiKey] = useState<string>();
+  const [startItem, setStartItem] = useState<string>();
+  const [templates, setTemplates] = useState<string>();
+  const [fields, setFields] = useState<string>();
+
+  const handleGqlEndpoint = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setGqlEndpoint(event.target.value);
+  };
+  const handleApiKey = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setGqlApiKey(event.target.value);
+  };
+  const handleStartItem = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setStartItem(event.target.value);
+  };
+  const handleTemplates = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setTemplates(event.target.value);
+  };
+  const handleFields = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFields(event.target.value);
+  };
+
+  const runExport = () => {
+    const query = GetGqlQuery(
+      gqlEndpoint,
+      gqlApiKey,
+      startItem,
+      templates,
+      fields
+    );
+    alert(query);
+  };
 
   return (
     <SidebarProvider>
@@ -69,11 +102,19 @@ export default function InstanceSetupPage() {
                   <b>EXPORT settings:</b>
                   <div className="row">
                     <span className="header">GQL Endpoint</span>
-                    <textarea id="txtGqlEndpoint" />
+                    <textarea
+                      id="txtGqlEndpoint"
+                      onInput={handleGqlEndpoint}
+                      onChange={handleGqlEndpoint}
+                    />
                   </div>
                   <div className="row">
                     <span className="header">GQL API Key</span>
-                    <textarea id="txtSCApiKey" />
+                    <textarea
+                      id="txtSCApiKey"
+                      onInput={handleApiKey}
+                      onChange={handleApiKey}
+                    />
                   </div>
 
                   <b>IMPORT settings (requires GQL Endpoint above):</b>
@@ -126,6 +167,8 @@ export default function InstanceSetupPage() {
                     <textarea
                       placeholder="Start Item ID(s)"
                       id="inputStartitem"
+                      onInput={handleStartItem}
+                      onChange={handleStartItem}
                     />
                     <span className="border-notes">
                       Enter the ID of each starting node separated by commas
@@ -144,7 +187,11 @@ export default function InstanceSetupPage() {
                     <a className="clear-btn" data-id="inputTemplates">
                       clear
                     </a>
-                    <textarea id="inputTemplates"></textarea>
+                    <textarea
+                      id="inputTemplates"
+                      onInput={handleTemplates}
+                      onChange={handleTemplates}
+                    ></textarea>
                     <span className="border-notes">
                       Enter template IDs separated by commas (MUST BE GUIDs)
                       <br />
@@ -167,7 +214,13 @@ export default function InstanceSetupPage() {
                     <a className="clear-btn" data-id="inputFields">
                       clear
                     </a>
-                    <textarea id="inputFields" cols={60} rows={5}></textarea>
+                    <textarea
+                      id="inputFields"
+                      cols={60}
+                      rows={5}
+                      onInput={handleFields}
+                      onChange={handleFields}
+                    ></textarea>
 
                     <button
                       id="btnBrowseFields"
@@ -202,11 +255,7 @@ export default function InstanceSetupPage() {
                       </span>
                     </div>
 
-                    <button
-                    // onClick={() => alert('Run Export')}
-                    >
-                      Run Export
-                    </button>
+                    <button onClick={() => runExport()}>Run Export</button>
                   </div>
                 </div>
               </div>
