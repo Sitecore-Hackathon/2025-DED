@@ -99,8 +99,6 @@ export const PostMutationQuery = (gqlEndpoint?: string, authToken?: string, csvD
     loadingModal.style.display = 'block';
   }
 
-  //const query = GetSearchQuery(gqlEndpoint, gqlApiKey, startItem, templates, fields);
-
   if (!gqlEndpoint || !authToken) {
     alert('Select an Instance with an Auth token');
     return;
@@ -133,7 +131,7 @@ export const PostMutationQuery = (gqlEndpoint?: string, authToken?: string, csvD
       console.log(row[property]);
 
       if (
-        property === 'Item Name' ||
+        property === 'Item Path' ||
         property === 'ID' ||
         property === 'Name' ||
         property === 'Language' ||
@@ -164,14 +162,18 @@ export const PostMutationQuery = (gqlEndpoint?: string, authToken?: string, csvD
     queries.push(jsonQuery);
   }
 
+  alert('about to run all queries!');
+
   Promise.all(queries.map((query) => PostUpdateQuery(gqlEndpoint, authToken, JSON.stringify(query)))).then((results) =>
     results.forEach((result) => console.log(result))
   );
+
+  if (loadingModal) {
+    loadingModal.style.display = 'none';
+  }
 };
 
 export const PostUpdateQuery = (gqlEndpoint: string, authToken: string, jsonQuery: string) => {
-  const loadingModal = document.getElementById('loading-modal');
-
   fetch(gqlEndpoint, {
     method: 'POST',
     headers: new Headers({ Authorization: 'Bearer ' + authToken, 'content-type': 'application/json' }),
@@ -185,8 +187,5 @@ export const PostUpdateQuery = (gqlEndpoint: string, authToken: string, jsonQuer
     })
     .catch((error) => {
       console.error('Error:', error);
-      if (loadingModal) {
-        loadingModal.style.display = 'none';
-      }
     });
 };

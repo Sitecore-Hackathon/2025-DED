@@ -128,3 +128,9 @@
 .fixed {
   z-index: 9;
 }
+
+p[data-slot='dialog-description'] {
+  a {
+    color: #3498db;
+  }
+}
