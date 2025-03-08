@@ -20,9 +20,7 @@ The [Content Export Tool](https://github.com/estockwell-alpert/ContentExportTool
 
 ## Video link
 
-⟹ Provide a video highlighing your Hackathon module submission and provide a link to the video. You can use any video hosting, file share or even upload the video to this repository. _Just remember to update the link below_
-
-⟹ [Replace this Video link](#video-link)
+[Video](https://www.youtube.com/watch?v=cL-6R3WKEBQ)
 
 ## Pre-requisites and Dependencies
 
