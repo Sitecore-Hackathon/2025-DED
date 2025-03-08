@@ -50,13 +50,19 @@ export const SaveSettingsModal = ({ open, onOpenChange, onSubmit }: InstanceSett
     setShowOverwrite(false);
     const setting = savedSettings.find((setting) => setting.name === values.name);
 
-    if (setting) {
+    if (setting && !showOverwrite) {
       setShowOverwrite(true);
     } else {
       onSubmit(values);
       form.reset();
       alert('Saved!');
     }
+  };
+
+  const cancelSave = () => {
+    setShowOverwrite(false);
+    onOpenChange(false);
+    form.reset();
   };
 
   return (
@@ -84,7 +90,13 @@ export const SaveSettingsModal = ({ open, onOpenChange, onSubmit }: InstanceSett
 
             {!showOverwrite ? (
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    cancelSave();
+                  }}
+                >
                   Cancel
                 </Button>
                 <Button type="submit">Save Settings</Button>
@@ -96,8 +108,7 @@ export const SaveSettingsModal = ({ open, onOpenChange, onSubmit }: InstanceSett
                   type="button"
                   variant="outline"
                   onClick={() => {
-                    setShowOverwrite(false);
-                    onOpenChange(false);
+                    cancelSave();
                   }}
                 >
                   Cancel

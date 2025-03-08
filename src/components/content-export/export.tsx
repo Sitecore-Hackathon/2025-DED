@@ -66,7 +66,12 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
       fields: fields ?? '',
     };
 
-    const updatedSavedSettings = [...savedSettings, settings];
+    // check if setting with name already exists
+    const filteredSettings = savedSettings.filter((settings) => settings.name !== newSettings.name);
+
+    // add
+    const updatedSavedSettings = [...filteredSettings, settings];
+
     setSavedSettings(updatedSavedSettings);
     sessionStorage.setItem('settings', JSON.stringify(updatedSavedSettings));
 
