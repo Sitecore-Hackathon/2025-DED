@@ -108,19 +108,21 @@ From within the application:
 ### Content Import:
 
 Example files:
+
 [Update Content](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/exampleFiles/Import-Update.csv)
+
 [Create Content](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/exampleFiles/Import-Create.csv)
 
 1. Get an Auth Token for your
-1. Follow the In App Configuration section, configure an **authoring API endpoing endpoint**, e.g. https://mysite.sc/sitecore/api/authoring/graphql/v1/
+2. Follow the In App Configuration section, configure an **authoring API endpoing endpoint**, e.g. https://mysite.sc/sitecore/api/authoring/graphql/v1/
 
    ![Instance Configuration](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/AuthoringSetup.png)
 
-1. Navigate to the Content Export Tool (/Content/Export)
-1. Select your Instance from the dropdown
-1. Enter your filters
+3. Navigate to the Content Export Tool (/Content/Export)
+4. Select your Instance from the dropdown
+5. Enter your filters
    - Start Item(s): One of more item IDs specifying where to pull content from, separated by comma. Defaults to the full content tree
    - Templates: One or more template ID to specify what types of items to export
    - Fields: All of the fields that you want included in the export. Null/invalid fields will return "n/a" in the export, so you can include fields that do not exist on all items
      ![Export Page](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/Export.png)
-1. Click Run Export and wait for your CSV to download!
+6. Click Run Export and wait for your CSV to download!
