@@ -6,7 +6,13 @@ export const GetContentExportResults = (
   startItem?: string,
   templates?: string,
   fields?: string
-): any => {
+): void => {
+  // show loading modal
+  const loadingModal = document.getElementById('loading-modal');
+  if (loadingModal) {
+    loadingModal.style.display = 'block';
+  }
+
   const query = GetSearchQuery(gqlEndpoint, gqlApiKey, startItem, templates, fields);
 
   if (!gqlEndpoint || !gqlApiKey) {
@@ -51,10 +57,35 @@ export const GetContentExportResults = (
         csvData.push(resultRow);
       }
 
-      console.log(csvData);
-      return csvData;
+      //let converter = require('json-2-csv');
+      //converter.json2csv(data).then((result: any) => {
+      //  console.log(result);
+      //});
+
+      let csvString = '';
+      for (let i = 0; i < csvData.length; i++) {
+        csvString += csvData[i] + '\n';
+      }
+
+      console.log(csvString);
+
+      const element = document.createElement('a');
+      const file = new Blob([csvString], { type: 'text/csv' });
+      element.href = URL.createObjectURL(file);
+      element.download = 'ContentExport.csv';
+      document.body.appendChild(element); // Required for this to work in FireFox
+      element.click();
+
+      if (loadingModal) {
+        loadingModal.style.display = 'none';
+      }
+
+      alert('Done - check your downloads!');
     })
     .catch((error) => {
       console.error('Error:', error);
+      if (loadingModal) {
+        loadingModal.style.display = 'none';
+      }
     });
 };

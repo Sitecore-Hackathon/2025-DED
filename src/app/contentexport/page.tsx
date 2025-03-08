@@ -1,5 +1,6 @@
 'use client';
 import { AppSidebar } from '@/components/app-sidebar';
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -76,15 +77,7 @@ export default function InstanceSetupPage() {
       return;
     }
 
-    const csvData = GetContentExportResults(
-      activeInstance.graphQlEndpoint,
-      activeInstance.apiToken,
-      startItem,
-      templates,
-      fields
-    );
-
-    // output csvData!
+    GetContentExportResults(activeInstance.graphQlEndpoint, activeInstance.apiToken, startItem, templates, fields);
   };
 
   const browseFields = () => {
@@ -121,6 +114,25 @@ export default function InstanceSetupPage() {
         <div className="contentExportTool">
           <ContentExportSearchStyles />
           <h1 className="text-2xl font-bold">Content Export Tool</h1>
+
+          <div className="loading-modal" id="loading-modal">
+            <div className="loading-box">
+              <div className="lds-default">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+          </div>
 
           <div className="advanced-inner">
             <div className="inner-section">
