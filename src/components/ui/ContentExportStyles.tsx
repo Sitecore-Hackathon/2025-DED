@@ -176,6 +176,14 @@ const ContentExportSearchStyles = (): JSX.Element => {
         height: 60%;
     }
 
+    .modal {
+        display: none;
+    }
+
+    .modal.open {
+        display: block;
+    }
+
      .selector-box {
         width: 450px;
         overflow: scroll;
@@ -198,7 +206,6 @@ const ContentExportSearchStyles = (): JSX.Element => {
 
         .modal.browse-modal ul li {
             position: relative;
-            left: -20px;
         }
 
     .modal.browse-modal li ul {
@@ -221,7 +228,6 @@ const ContentExportSearchStyles = (): JSX.Element => {
 
     .modal.browse-modal .browse-expand {
         color: rgb(38, 148, 192);
-        position: absolute;
     }
 
     .modal.browse-modal .sitecore-node {
@@ -796,6 +802,22 @@ const ContentExportSearchStyles = (): JSX.Element => {
   }
 }
 
+.select-box.left {
+    padding:4px;
+}
+
+.browse-input {
+    display: flex;
+padding-bottom:12px;
+    border-bottom: 1px solid #ccc;
+}
+
+.browse-input input {
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    margin-right: 4px;
+    flex-grow: 1;
+}
 
 
               `}

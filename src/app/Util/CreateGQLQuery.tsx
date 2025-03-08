@@ -73,33 +73,3 @@ export const GetSearchQuery = (
 
   return JSON.stringify(jsonQuery);
 };
-
-export const GetAvailableFields = (templateNames: string): string[] => {
-  let results = [];
-
-  var templates = templateNames.split(',');
-  for (var i = 0; i < templates.length; i++) {
-    var query = GetTemplateSchemaQuery(templates[i].trim());
-
-    // MAKE FETCH TO GET RESULTS, ADD TO LIST
-    // for now, just push the query to the results, so we can see it
-    results.push(query);
-  }
-
-  return results;
-};
-
-export const GetTemplateSchemaQuery = (template: string): string => {
-  return (
-    `query {
-        __type(name:"` +
-    template +
-    `") {
-            fields {
-                name
-                description
-            }  
-        }
-    }`
-  );
-};

@@ -13,9 +13,9 @@ import ContentExportSearchStyles from '@/components/ui/ContentExportStyles';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { enumInstanceType, IInstance } from '@/models/IInstance';
 import { Separator } from '@radix-ui/react-separator';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GetContentExportResults } from '../Util/contentExportToolUtil';
-import { GetAvailableFields } from '../Util/CreateGQLQuery';
+import { SchemaTemplate } from '../Util/SchemaTemplate';
 
 export default function InstanceSetupPage() {
   const [instances, setInstances] = useState<IInstance[]>(() => {
@@ -34,6 +34,11 @@ export default function InstanceSetupPage() {
   const [templates, setTemplates] = useState<string>();
   const [templateNames, setTemplateNames] = useState<string>();
   const [fields, setFields] = useState<string>();
+  const [availableFields, setAvailableFields] = useState<string[]>();
+  const [selectedFields, setSelectedFields] = useState<string[]>();
+  const [activeField, setActiveField] = useState<string>();
+
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const handleStartItem = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setStartItem(event.target.value);
@@ -44,7 +49,7 @@ export default function InstanceSetupPage() {
   const handleFields = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setFields(event.target.value);
   };
-  const handleTemplateNames = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleTemplateNames = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTemplateNames(event.target.value);
   };
 
@@ -81,13 +86,107 @@ export default function InstanceSetupPage() {
   };
 
   const browseFields = () => {
-    if (!templateNames) {
-      alert('Enter Template Names (below the Fields input) to get available fields');
+    if (!activeInstance?.graphQlEndpoint || !activeInstance.apiToken) {
+      alert('You must select an instance first');
       return;
     }
-    const queries = GetAvailableFields(templateNames);
-    console.log(queries);
+
+    if (!templateNames) {
+      alert('Enter a template name');
+      return;
+    }
+
+    console.log(activeInstance);
+
+    const query = SchemaTemplate.replace('[templatename]', templateNames.trim());
+
+    const jsonQuery = {
+      query: query,
+    };
+
+    console.log(jsonQuery);
+
+    let fieldsList = availableFields ?? [];
+
+    fetch(activeInstance.graphQlEndpoint, {
+      method: 'POST',
+      headers: new Headers({ sc_apikey: activeInstance.apiToken, 'content-type': 'application/json' }),
+      body: JSON.stringify(jsonQuery),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // parse data
+        console.log(data);
+
+        const results = data.data.__type.fields;
+        console.log(results);
+
+        for (var i = 0; i < results.length; i++) {
+          console.log(results[i]);
+          const result = results[i];
+          const field = result.name;
+
+          fieldsList.push(field);
+        }
+
+        setAvailableFields(fieldsList);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   };
+
+  const removeField = (field: string) => {
+    let fields = selectedFields ?? [];
+    fields = fields.filter(function (item) {
+      return item !== field;
+    });
+    setSelectedFields(fields);
+  };
+
+  const clearModal = () => {
+    setSelectedFields([]);
+  };
+
+  const confirmFieldSelection = () => {};
+
+  const selectAllFields = () => {
+    setSelectedFields(availableFields);
+  };
+
+  const addActiveField = () => {
+    if (activeField) {
+      addField(activeField);
+    }
+  };
+
+  const addField = (field: string) => {
+    alert(field);
+    let fields = selectedFields ?? [];
+    if (fields.indexOf(field)) {
+      return;
+    }
+    fields.push(field);
+    setSelectedFields(fields);
+  };
+
+  const removeActiveField = () => {
+    let fields = selectedFields ?? [];
+    fields = fields.filter(function (item) {
+      return item !== activeField;
+    });
+    setSelectedFields(fields);
+  };
+
+  const setActive = () => {};
+
+  useEffect(() => {
+    console.log('SELECTED FIELDS: ');
+    console.log(selectedFields);
+
+    console.log('AVAILABLE FIELDS: ');
+    console.log(availableFields);
+  }, [selectedFields, availableFields]);
 
   return (
     <SidebarProvider>
@@ -134,6 +233,82 @@ export default function InstanceSetupPage() {
             </div>
           </div>
 
+          <div className={'modal browse-modal fields' + (modalOpen ? ' open' : '')}>
+            <div className="select-box left">
+              <span>Enter Template Name:</span>
+              <div className="browse-input">
+                <input
+                  id="txtFieldTemplates"
+                  onInput={handleTemplateNames}
+                  onChange={handleTemplateNames}
+                  placeholder={'e.g. StandardTemplate'}
+                ></input>
+                <button id="btnGetFields" onClick={() => browseFields()}>
+                  Get Fields
+                </button>
+              </div>
+              <div id="divBrowseFields">
+                {availableFields && availableFields.length > 0 && (
+                  <>
+                    <a className="select-all" href="javascript:void(0)" onClick={() => selectAllFields()}>
+                      select all
+                    </a>
+                    <ul>
+                      {availableFields.map((field) => {
+                        return (
+                          <li key={field + Math.random().toString(16).slice(2)}>
+                            <a data-name={field} onDoubleClick={() => addField(field)} onClick={() => setActive()}>
+                              {field}
+                            </a>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </>
+                )}
+              </div>
+            </div>
+            <div className="arrows">
+              <a className="btn" onClick={() => addActiveField()}>
+                &raquo;
+              </a>
+              <a className="btn" onClick={() => removeActiveField()}>
+                &laquo;
+              </a>
+            </div>
+            <div className="selected-box fields">
+              <span className="temp-selected"></span>
+              <span className="temp-selected-remove"></span>
+
+              {selectedFields && selectedFields.length > 0 && (
+                <>
+                  <ul className="selected-box-list">
+                    {selectedFields.map((field) => {
+                      return (
+                        <li key={field + Math.random().toString(16).slice(2)}>
+                          <a data-name={field} onDoubleClick={() => removeField(field)} onClick={() => setActive()}>
+                            {field}
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </>
+              )}
+              <div className="browse-btns">
+                <a href="javascript:void" className="btn clear-selections" onClick={() => clearModal()}>
+                  Clear
+                </a>
+                <a href="javascript:void(0)" className="btn select-node-btn" onClick={() => confirmFieldSelection()}>
+                  Select
+                </a>
+                <a className="btn close-modal" onClick={() => setModalOpen(false)}>
+                  Cancel
+                </a>
+              </div>
+            </div>
+          </div>
+
           <div className="advanced-inner">
             <div className="inner-section">
               <div className="container">
@@ -149,7 +324,7 @@ export default function InstanceSetupPage() {
                           <option>-- select instance --</option>
                           {instances.map((instance) => {
                             return (
-                              <option key={instance.id} value={instance.name}>
+                              <option key={instance.id + Math.random().toString(16).slice(2)} value={instance.name}>
                                 {instance.name}
                               </option>
                             );
@@ -247,30 +422,11 @@ export default function InstanceSetupPage() {
                       placeholder={'e.g. title, image, taxonomies'}
                     ></textarea>
 
-                    <span className="border-notes">Enter field names separated by commas.</span>
+                    <button id="btnBrowseFields" onClick={() => setModalOpen(true)}>
+                      Browse Fields
+                    </button>
 
-                    <div className="">
-                      <br />
-                      <br />
-                      <span className="header">
-                        <b>Browse Fields - input template names below, then click button to see available fields</b>
-                      </span>
-                      <span className="header">Template Names (for browse):</span>
-                      <textarea
-                        id="txtFieldTemplates"
-                        cols={60}
-                        rows={5}
-                        onInput={handleTemplateNames}
-                        onChange={handleTemplateNames}
-                        placeholder={'e.g. Person, Whitepaper, LandingPage'}
-                      ></textarea>
-                      <button id="btnBrowseFields" onClick={() => browseFields()}>
-                        Browse Fields
-                      </button>
-                      <span className="border-notes">
-                        Enter template NAMES separated by commas. This will not filter; it will only retrieve fields
-                      </span>
-                    </div>
+                    <span className="border-notes">Enter field names separated by commas.</span>
 
                     <button onClick={() => runExport()}>Run Export</button>
                   </div>
