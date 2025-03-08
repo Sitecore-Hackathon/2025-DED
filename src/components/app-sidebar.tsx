@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, FileDown, GalleryVerticalEnd, HousePlug } from 'lucide-react';
+import { BookOpen, FileDown, GalleryVerticalEnd, HousePlug, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { NavMain } from '@/components/nav-main';
@@ -33,16 +33,29 @@ const data = {
       isActive: true,
       items: [
         {
-          title: 'Setup',
-          url: '/settings/instance',
-        },
-        {
           title: 'Export Tool',
           url: '/content/export',
         },
         {
           title: 'Copilot',
           url: '/content/copilot',
+        },
+      ],
+    },
+
+    {
+      title: 'Configuration',
+      url: '#',
+      icon: Settings,
+      isActive: true,
+      items: [
+        {
+          title: 'Sitecore Instances',
+          url: '/settings/instance',
+        },
+        {
+          title: 'API Tokens',
+          url: '/settings/config',
         },
       ],
     },

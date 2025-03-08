@@ -1,5 +1,6 @@
 'use client';
 import { AppSidebar } from '@/components/app-sidebar';
+import { CopilotChat } from '@/components/copilot/copilot-chat';
 
 import {
   Breadcrumb,
@@ -11,11 +12,13 @@ import {
 } from '@/components/ui/breadcrumb';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { IInstance } from '@/models/IInstance';
+import { enumTokenTypes, IToken } from '@/models/IToken';
 import { Separator } from '@radix-ui/react-separator';
 import { useEffect, useState } from 'react';
 
 export default function CopilotPage() {
   const [instances, setInstances] = useState<IInstance[]>([]);
+  const [openAiToken, setOpenAIToken] = useState<IToken | undefined>();
 
   useEffect(() => {
     const saved = sessionStorage.getItem('instances');
@@ -25,6 +28,21 @@ export default function CopilotPage() {
         setInstances(parsedInstances);
       } catch (error) {
         console.error('Error parsing instances from sessionStorage:', error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const savedTokens = sessionStorage.getItem('api-tokens');
+    if (savedTokens) {
+      try {
+        const parsedTokens = JSON.parse(savedTokens);
+        const openAIConfig = parsedTokens.find((token: any) => token.type === enumTokenTypes.OpenAI);
+        if (openAIConfig) {
+          setOpenAIToken(openAIConfig.token);
+        }
+      } catch (error) {
+        console.error('Error parsing tokens from sessionStorage:', error);
       }
     }
   }, []);
@@ -52,8 +70,18 @@ export default function CopilotPage() {
         </header>
 
         <div className="container mx-auto py-6 px-4">
-          <div className="border bg-card text-card-foreground shadow-sm">
-            <div className="p-6">Copilot Incoming</div>
+          <div className="bg-card text-card-foreground shadow-sm">
+            <div className="p-6">
+              {openAiToken ? (
+                <CopilotChat token={openAiToken} instances={instances} />
+              ) : (
+                <div className="text-center py-6">
+                  <p className="text-muted-foreground">
+                    Please configure an OpenAI API token in settings to use the Content Copilot.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </SidebarInset>
