@@ -128,3 +128,8 @@ Example files:
 7. Click Import
 8. The post requests to the authoring API do not currently work due to a CORS error, but you can see the generated GraphQL queries in the Console
    ![Import Page](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/Import.png)
+
+## Known Bugs and Next Steps
+
+- Update feature does not work from the browser due to CORS
+- There is a known export bug with outputting fields that contain quotes and commas, where these fields get broken across multiple cells in Excel. This may affect the output of rich text fields.
