@@ -65,6 +65,8 @@ To run the application locally, using Node, run the following commands:
    ```
 4. Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
 
+## Using the Application
+
 ### In App Configuration
 
 If using the production environment (https://sitecore-content-export.vercel.app), or if you've completed the local development server setup, you'll need to configure instances within the app. Think of these as "connections" to your Sitecore instances.
