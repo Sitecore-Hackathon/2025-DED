@@ -72,7 +72,7 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
               placeholder="e.g. {D4D93D21-A8B4-4C0F-8025-251A38D9A04D}"
               className="font-mono text-sm"
             />
-            <Alert variant="info" className="mt-2">
+            <Alert variant="default" className="mt-2">
               <AlertDescription className="text-xs">
                 Enter GUIDs of starting nodes separated by commas. Only content beneath these nodes will be exported.
               </AlertDescription>

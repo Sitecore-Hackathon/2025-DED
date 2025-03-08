@@ -101,26 +101,26 @@ export const ContentTransferTool: FC<ContentTransferToolProps> = ({ instances })
       <br />
 
       {activeInstance && (
-        <Tabs defaultValue="import" className="w-full">
+        <Tabs defaultValue="export" className="w-full">
           <TabsList className="grid w-full grid-cols-2 border-b border-border bg-transparent">
-            <TabsTrigger
-              value="import"
-              className="relative bg-transparent px-4 pb-3 pt-2 font-medium text-muted-foreground data-[state=active]:text-foreground data-[state=active]:shadow-none before:absolute before:left-0 before:bottom-0 before:h-0.5 before:w-full before:scale-x-0 before:bg-foreground before:transition-transform data-[state=active]:before:scale-x-100"
-            >
-              Import
-            </TabsTrigger>
             <TabsTrigger
               value="export"
               className="relative bg-transparent px-4 pb-3 pt-2 font-medium text-muted-foreground data-[state=active]:text-foreground data-[state=active]:shadow-none before:absolute before:left-0 before:bottom-0 before:h-0.5 before:w-full before:scale-x-0 before:bg-foreground before:transition-transform data-[state=active]:before:scale-x-100"
             >
               Export
             </TabsTrigger>
+            <TabsTrigger
+              value="import"
+              className="relative bg-transparent px-4 pb-3 pt-2 font-medium text-muted-foreground data-[state=active]:text-foreground data-[state=active]:shadow-none before:absolute before:left-0 before:bottom-0 before:h-0.5 before:w-full before:scale-x-0 before:bg-foreground before:transition-transform data-[state=active]:before:scale-x-100"
+            >
+              Import
+            </TabsTrigger>
           </TabsList>
-          <TabsContent value="import" className="pt-6">
-            <ImportTool activeInstance={activeInstance} />
-          </TabsContent>
           <TabsContent value="export" className="pt-6">
             <ExportTool activeInstance={activeInstance} setExportOpen={setExportOpen} exportOpen={exportOpen} />
+          </TabsContent>
+          <TabsContent value="import" className="pt-6">
+            <ImportTool activeInstance={activeInstance} />
           </TabsContent>
         </Tabs>
       )}
