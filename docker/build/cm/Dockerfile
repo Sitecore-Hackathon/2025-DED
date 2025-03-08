@@ -5,12 +5,16 @@ ARG BASE_IMAGE
 ARG SXA_IMAGE
 ARG SPE_IMAGE
 ARG TOOLING_IMAGE
+ARG JSS_IMAGE
 ARG CLI_IMAGE
+ARG MGSV_IMAGE
 
 FROM ${TOOLING_IMAGE} as tooling
 FROM ${SXA_IMAGE} as sxa
 FROM ${SPE_IMAGE} as spe 
 FROM ${CLI_IMAGE} AS cli
+FROM ${JSS_IMAGE} AS jss
+FROM ${MGSV_IMAGE} as mgsv
 FROM ${BASE_IMAGE}
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
@@ -36,3 +40,12 @@ RUN C:\tools\scripts\Invoke-XdtTransform.ps1 -Path .\ -XdtPath C:\transforms\rol
 
 # Add CLI tools
 COPY --from=cli C:\module\cm\content C:\inetpub\wwwroot
+
+# Add JSS module
+COPY --from=jss \module\cm\content .\
+COPY --from=jss \module\tools C:\module\tools
+RUN C:\module\tools\Initialize-Content.ps1 -TargetPath C:\inetpub\wwwroot; `
+  Remove-Item -Path C:\module -Recurse -Force;
+
+# Management services
+COPY --from=mgsv C:\module\cm\content C:\inetpub\wwwroot

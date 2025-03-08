@@ -1,4 +1,4 @@
-services:   
+services:
   cm:
     image: ${REGISTRY}${COMPOSE_PROJECT_NAME}-cm:${VERSION:-latest}
     build:
@@ -8,14 +8,16 @@ services:
         TOOLING_IMAGE: ${SITECORE_TOOLS_REGISTRY}sitecore-docker-tools-assets:${TOOLS_VERSION}
         SPE_IMAGE: ${SITECORE_MODULE_REGISTRY}sitecore-spe-assets:${SPE_VERSION}
         SXA_IMAGE: ${SITECORE_MODULE_REGISTRY}sitecore-sxa-xm1-assets:${SXA_VERSION}
-        CLI_IMAGE: ${SITECORE_MODULE_REGISTRY}sitecore-management-services-xp1-assets:${CLI_VERSION}    
+        CLI_IMAGE: ${SITECORE_MODULE_REGISTRY}sitecore-management-services-xp1-assets:${CLI_VERSION}
+        JSS_IMAGE: ${SITECORE_MODULE_REGISTRY}sitecore-headless-services-xm1-assets:${JSS_VERSION}
+        MGSV_IMAGE: ${SITECORE_MODULE_REGISTRY}sitecore-management-services-xm1-assets:${MGSV_VERSION}
       dockerfile: Dockerfile
     mem_limit: 4g
     volumes:
-      - ${LOCAL_DEPLOY_PATH:-.\deploy}\cm\website:C:\deploy      
+      - ${LOCAL_DEPLOY_PATH:-.\deploy}\cm\website:C:\deploy
     environment:
       SITECORE_DEVELOPMENT_PATCHES: ${CustomErrors:-Off}
-    entrypoint: powershell -Command "& C:\\tools\\entrypoints\\iis\\Development.ps1"     
+    entrypoint: powershell -Command "& C:\\tools\\entrypoints\\iis\\Development.ps1"
 
   id:
     image: ${REGISTRY}${COMPOSE_PROJECT_NAME}-id:${VERSION:-latest}
@@ -23,7 +25,7 @@ services:
       context: ./build/id
       args:
         BASE_IMAGE: ${SITECORE_DOCKER_REGISTRY}sitecore-id7:${SITECORE_VERSION}
-    
+
   solr-init:
     image: ${REGISTRY}${COMPOSE_PROJECT_NAME}-xp0-solr-init:${VERSION:-latest}
     build:
@@ -32,6 +34,5 @@ services:
         BASE_IMAGE: ${SITECORE_DOCKER_REGISTRY}sitecore-xp0-solr-init:${SITECORE_VERSION}
         SXA_IMAGE: ${SITECORE_MODULE_REGISTRY}sitecore-sxa-xm1-assets:${SXA_VERSION}
 
-     
   cd:
     scale: 0
