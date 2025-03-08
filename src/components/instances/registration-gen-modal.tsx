@@ -1,5 +1,4 @@
 'use client';
-import { getAccessToken } from '@/app/services/sitecore/generateAccessToken';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,6 +11,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { enumInstanceType, IInstance } from '@/models/IInstance';
+import { getAccessToken } from '@/services/sitecore/generateAccessToken';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';

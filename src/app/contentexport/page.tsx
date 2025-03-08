@@ -15,8 +15,8 @@ import { enumInstanceType, IInstance } from '@/models/IInstance';
 import { Separator } from '@radix-ui/react-separator';
 import Papa from 'papaparse';
 import { useState } from 'react';
-import { GetContentExportResults, PostMutationQuery } from '../Util/contentExportToolUtil';
-import { GetAvailableFields } from '../Util/CreateGQLQuery';
+import { GetContentExportResults, PostMutationQuery } from '../../lib/contentExportToolUtil';
+import { GetAvailableFields } from '../../services/sitecore/createGqlQuery';
 
 export default function InstanceSetupPage() {
   const [instances, setInstances] = useState<IInstance[]>(() => {

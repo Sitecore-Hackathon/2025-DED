@@ -1,4 +1,4 @@
-import { SearchQueryTemplate } from './SearchQueryTemplate';
+import { SearchQueryTemplate } from '@/services/sitecore/searchTemplate.query';
 
 export const GetSearchQuery = (
   gqlEndpoint?: string,
