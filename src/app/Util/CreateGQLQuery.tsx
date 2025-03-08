@@ -67,7 +67,11 @@ export const GetSearchQuery = (
     .replace('templatesFragment', templateFragment)
     .replace('fieldsFragment', fieldsFragment);
 
-  return query;
+  const jsonQuery = {
+    query: query,
+  };
+
+  return JSON.stringify(jsonQuery);
 };
 
 export const GetAvailableFields = (templateNames: string): string[] => {

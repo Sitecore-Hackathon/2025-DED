@@ -20,23 +20,39 @@ import { PlusCircle } from 'lucide-react';
 import { useState } from 'react';
 
 export default function InstanceSetupPage() {
-  const [instances, setInstances] = useState<IInstance[]>([]);
-  const [isGenModalOpen, setIsGenModalOpen] = useState(true);
+  const [instances, setInstances] = useState<IInstance[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = sessionStorage.getItem('instances');
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+
+  const [isGenModalOpen, setIsGenModalOpen] = useState(false);
   const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
 
-  const handleAddInstance = (newInstance: Omit<IInstance, 'id' | 'createdAt'>) => {
+  const handleAddInstance = (newInstance: Omit<IInstance, 'id'>) => {
     const instance: IInstance = {
       ...newInstance,
-      id: Math.random().toString(36).substring(2, 9),
+      id: crypto.randomUUID(),
     };
 
-    setInstances([...instances, instance]);
+    const updatedInstances = [...instances, instance];
+    setInstances(updatedInstances);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('instances', JSON.stringify(updatedInstances));
+    }
+
     setIsGenModalOpen(false);
     setIsTokenModalOpen(false);
   };
 
   const handleDeleteInstance = (id: string) => {
-    setInstances(instances.filter((instance) => instance.id !== id));
+    const updatedInstances = instances.filter((instance) => instance.id !== id);
+    setInstances(updatedInstances);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('instances', JSON.stringify(updatedInstances));
+    }
   };
 
   return (
