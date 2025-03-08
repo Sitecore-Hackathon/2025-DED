@@ -1,11 +1,12 @@
 import { IInstance } from '@/models/IInstance';
+import { ISettings } from '@/models/ISettings';
 import { GetContentExportResults } from '@/services/sitecore/contentExportToolUtil';
-import { GetAvailableFields } from '@/services/sitecore/createGqlQuery';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Textarea } from '../ui/textarea';
+import { SaveSettingsModal } from './save-settings-modal';
 
 interface ExportToolProps {
   activeInstance: IInstance | undefined;
@@ -18,6 +19,8 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
   const [templates, setTemplates] = useState<string>();
   const [templateNames, setTemplateNames] = useState<string>();
   const [fields, setFields] = useState<string>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [savedSettings, setSavedSettings] = useState<ISettings[]>([]);
 
   const handleStartItem = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setStartItem(event.target.value);
@@ -41,13 +44,27 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
     GetContentExportResults(activeInstance.graphQlEndpoint, activeInstance.apiToken, startItem, templates, fields);
   };
 
-  const browseFields = () => {
-    if (!templateNames) {
-      alert('Enter Template Names (below the Fields input) to get available fields');
-      return;
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('settings');
+      if (saved) {
+        const parsedInstances = JSON.parse(saved) as ISettings[];
+        setSavedSettings(parsedInstances);
+      }
+    } catch (error) {
+      console.error('Error loading settings:', error);
     }
-    const queries = GetAvailableFields(templateNames);
-    console.log(queries);
+  }, []);
+
+  const handleSaveSettings = (newSettings: Omit<ISettings, 'id'>) => {
+    const settings: ISettings = {
+      ...newSettings,
+      id: crypto.randomUUID(),
+    };
+
+    const updatedSavedSettings = [...savedSettings, settings];
+    setSavedSettings(updatedSavedSettings);
+    sessionStorage.setItem('settings', JSON.stringify(updatedSavedSettings));
   };
 
   return (
@@ -105,9 +122,6 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium">Fields</label>
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" onClick={browseFields}>
-                  Browse Fields
-                </Button>
                 <Button variant="ghost" size="sm" onClick={() => setFields('')}>
                   Clear
                 </Button>
@@ -120,23 +134,21 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
               className="text-sm"
             />
 
-            {/* Template Names for Field Browse */}
             <div className="mt-4 space-y-2">
-              <label className="text-sm font-medium">Template Names (for field browsing)</label>
-              <Textarea
-                value={templateNames}
-                onChange={handleTemplateNames}
-                placeholder="e.g. Person, Whitepaper, LandingPage"
-                className="text-sm"
-              />
               <div className="flex items-center gap-2 mt-4">
                 <Button variant="default" size="sm" onClick={runExport}>
                   Run Export
+                </Button>
+
+                <Button variant="default" size="sm" onClick={() => setIsModalOpen(true)}>
+                  Save Settings
                 </Button>
               </div>
             </div>
           </div>
         </div>
+
+        <SaveSettingsModal open={isModalOpen} onOpenChange={setIsModalOpen} onSubmit={handleSaveSettings} />
       </CardContent>
     </Card>
   );
