@@ -1,22 +1,11 @@
 'use client';
 
-import {
-  BookOpen,
-  FileDown,
-  GalleryVerticalEnd,
-  Settings2,
-  SquareTerminal,
-} from 'lucide-react';
+import { BookOpen, FileDown, GalleryVerticalEnd, HousePlug } from 'lucide-react';
 import * as React from 'react';
 
 import { NavMain } from '@/components/nav-main';
 import { TeamSwitcher } from '@/components/team-switcher';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarRail,
-} from '@/components/ui/sidebar';
+import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
 
 // This is sample data.
 const data = {
@@ -33,74 +22,34 @@ const data = {
   ],
   navMain: [
     {
-      title: 'Getting Started',
-      url: '#',
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: 'Instance Setup',
-          url: '/settings/instance',
-        },
-      ],
+      title: 'Dashboard',
+      url: '/',
+      icon: HousePlug,
     },
     {
-      title: 'Content Export',
+      title: 'Content',
       url: '#',
       icon: FileDown,
       isActive: true,
       items: [
         {
-          title: 'Content Export Tool',
-          url: '/contentexport',
+          title: 'Setup',
+          url: '/settings/instance',
+        },
+        {
+          title: 'Export Tool',
+          url: '/content/export',
+        },
+        {
+          title: 'Copilot',
+          url: '/content/copilot',
         },
       ],
     },
     {
       title: 'Documentation',
-      url: '#',
+      url: 'https://github.com/Sitecore-Hackathon/2025-DED',
       icon: BookOpen,
-      items: [
-        {
-          title: 'Introduction',
-          url: '#',
-        },
-        {
-          title: 'Get Started',
-          url: '#',
-        },
-        {
-          title: 'Tutorials',
-          url: '#',
-        },
-        {
-          title: 'Changelog',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Settings2,
-      items: [
-        {
-          title: 'General',
-          url: '#',
-        },
-        {
-          title: 'Team',
-          url: '#',
-        },
-        {
-          title: 'Billing',
-          url: '#',
-        },
-        {
-          title: 'Limits',
-          url: '#',
-        },
-      ],
     },
   ],
 };
