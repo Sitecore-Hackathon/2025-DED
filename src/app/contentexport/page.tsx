@@ -13,16 +13,22 @@ import {
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { IInstance } from '@/models/IInstance';
 import { Separator } from '@radix-ui/react-separator';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function ContentExportPage() {
-  const [instances, setInstances] = useState<IInstance[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = sessionStorage.getItem('instances');
-      return saved ? JSON.parse(saved) : [];
+  const [instances, setInstances] = useState<IInstance[]>([]);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem('instances');
+    if (saved) {
+      try {
+        const parsedInstances = JSON.parse(saved);
+        setInstances(parsedInstances);
+      } catch (error) {
+        console.error('Error parsing instances from sessionStorage:', error);
+      }
     }
-    return [];
-  });
+  }, []);
 
   return (
     <SidebarProvider>

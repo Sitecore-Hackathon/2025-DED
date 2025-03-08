@@ -17,16 +17,22 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/s
 import { IInstance } from '@/models/IInstance';
 import { Separator } from '@radix-ui/react-separator';
 import { PlusCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function InstanceSetupPage() {
-  const [instances, setInstances] = useState<IInstance[]>(() => {
-    if (typeof window !== 'undefined') {
+  const [instances, setInstances] = useState<IInstance[]>([]);
+
+  useEffect(() => {
+    try {
       const saved = sessionStorage.getItem('instances');
-      return saved ? JSON.parse(saved) : [];
+      if (saved) {
+        const parsedInstances = JSON.parse(saved) as IInstance[];
+        setInstances(parsedInstances);
+      }
+    } catch (error) {
+      console.error('Error loading instances:', error);
     }
-    return [];
-  });
+  }, []);
 
   const [isGenModalOpen, setIsGenModalOpen] = useState(false);
   const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
@@ -39,12 +45,7 @@ export default function InstanceSetupPage() {
 
     const updatedInstances = [...instances, instance];
     setInstances(updatedInstances);
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('instances', JSON.stringify(updatedInstances));
-    }
-
-    setIsGenModalOpen(false);
-    setIsTokenModalOpen(false);
+    sessionStorage.setItem('instances', JSON.stringify(updatedInstances));
   };
 
   const handleDeleteInstance = (id: string) => {
