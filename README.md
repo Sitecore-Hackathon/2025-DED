@@ -126,5 +126,5 @@ Example files:
      - Create: Item Path, Template, Name
 6. Select Update (default) or Create
 7. Click Import
-8. The post requests to the authoring API do not currently work due to a CORS error, but you can see the generate GraphQL queries in the Console
+8. The post requests to the authoring API do not currently work due to a CORS error, but you can see the generated GraphQL queries in the Console
    ![Import Page](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/Import.png)
