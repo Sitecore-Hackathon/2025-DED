@@ -76,30 +76,39 @@ export default function InstanceSetupPage() {
             </Breadcrumb>
           </div>
         </header>
-        <div className="container mx-auto py-10">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold">Instance Configuration</h1>
-            <div className="flex gap-2">
-              <Button onClick={() => setIsTokenModalOpen(true)}>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Add API Token
-              </Button>
-              <Button onClick={() => setIsGenModalOpen(true)}>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Generate Token
-              </Button>
+        <div className="container mx-auto py-6 px-4">
+          <div className="border bg-card text-card-foreground shadow-sm ">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-8">
+                <h1 className="text-3xl font-bold">Instance Configuration</h1>
+                <div className="flex gap-2">
+                  <Button onClick={() => setIsTokenModalOpen(true)}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add API Token
+                  </Button>
+                  <Button onClick={() => setIsGenModalOpen(true)}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Generate Token
+                  </Button>
+                </div>
+              </div>
+
+              <RegistrationTokenModal
+                open={isTokenModalOpen}
+                onOpenChange={setIsTokenModalOpen}
+                onSubmit={handleAddInstance}
+              />
+              <RegistrationGenModal
+                open={isGenModalOpen}
+                onOpenChange={setIsGenModalOpen}
+                onSubmit={handleAddInstance}
+              />
+
+              <ListingTable instances={instances} onDelete={handleDeleteInstance} />
             </div>
           </div>
-
-          <RegistrationTokenModal
-            open={isTokenModalOpen}
-            onOpenChange={setIsTokenModalOpen}
-            onSubmit={handleAddInstance}
-          />
-          <RegistrationGenModal open={isGenModalOpen} onOpenChange={setIsGenModalOpen} onSubmit={handleAddInstance} />
-
-          <ListingTable instances={instances} onDelete={handleDeleteInstance} />
         </div>
+        <div className="container mx-auto py-10"></div>
       </SidebarInset>
     </SidebarProvider>
   );
