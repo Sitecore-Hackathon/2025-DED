@@ -16,7 +16,14 @@ services:
     environment:
       SITECORE_DEVELOPMENT_PATCHES: ${CustomErrors:-Off}
     entrypoint: powershell -Command "& C:\\tools\\entrypoints\\iis\\Development.ps1"     
- 
+
+  id:
+    image: ${REGISTRY}${COMPOSE_PROJECT_NAME}-id:${VERSION:-latest}
+    build:
+      context: ./build/id
+      args:
+        BASE_IMAGE: ${SITECORE_DOCKER_REGISTRY}sitecore-id7:${SITECORE_VERSION}
+    
   solr-init:
     image: ${REGISTRY}${COMPOSE_PROJECT_NAME}-xp0-solr-init:${VERSION:-latest}
     build:
