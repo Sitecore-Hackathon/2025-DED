@@ -76,7 +76,14 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
   const handleSelectSettings = (value: string) => {
     const setting = savedSettings.find((setting) => setting.name === value);
 
-    console.log(setting);
+    if (!setting) {
+      alert("Something went wrong, couldn't find settings");
+      return;
+    }
+
+    setStartItem(setting.startItem);
+    setTemplates(setting.templates);
+    setFields(setting.fields);
   };
 
   return (
