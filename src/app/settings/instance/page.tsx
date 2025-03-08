@@ -1,4 +1,7 @@
+'use client';
+
 import { AppSidebar } from '@/components/app-sidebar';
+import { ListingTable } from '@/components/instances/listing-table';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,62 +10,45 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { ITreeItem } from '@/models/ITreeItem';
+import { IInstance } from '@/models/IInstance';
 import { Separator } from '@radix-ui/react-separator';
+import { PlusCircle } from 'lucide-react';
+import { useState } from 'react';
 
-const initialData: ITreeItem[] = [
+// Sample initial data
+const initialInstances: IInstance[] = [
   {
     id: '1',
-    name: 'Home',
-    children: [
-      {
-        id: '1-1',
-        name: 'About Us',
-      },
-      {
-        id: '1-2',
-        name: 'Product Development',
-        children: [
-          { id: '1-2-1', name: 'Engineering' },
-          {
-            id: '1-2-2',
-            name: 'Design',
-            children: [
-              { id: '1-2-2-1', name: 'UI Design' },
-              { id: '1-2-2-2', name: 'UX Research' },
-            ],
-          },
-          { id: '1-2-3', name: 'QA' },
-        ],
-      },
-      {
-        id: '1-3',
-        name: 'Marketing',
-        children: [
-          { id: '1-3-1', name: 'Digital Marketing' },
-          { id: '1-3-2', name: 'Content Creation' },
-        ],
-      },
-    ],
-  },
-  {
-    id: '2',
-    name: 'Project Roadmap',
-    children: [
-      { id: '2-1', name: 'Q1 Goals' },
-      { id: '2-2', name: 'Q2 Goals' },
-      { id: '2-3', name: 'Q3 Goals' },
-      { id: '2-4', name: 'Q4 Goals' },
-    ],
+    name: 'Production Server',
   },
 ];
 
 export default function InstanceSetupPage() {
+  const [instances, setInstances] = useState<IInstance[]>(initialInstances);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleAddInstance = (
+    newInstance: Omit<IInstance, 'id' | 'createdAt'>
+  ) => {
+    const instance: IInstance = {
+      ...newInstance,
+      id: Math.random().toString(36).substring(2, 9),
+    };
+
+    setInstances([...instances, instance]);
+    setIsModalOpen(false);
+  };
+
+  const handleDeleteInstance = (id: string) => {
+    setInstances(instances.filter(instance => instance.id !== id));
+  };
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -87,7 +73,19 @@ export default function InstanceSetupPage() {
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">WIP</div>
+        <div className="container mx-auto py-10">
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold">Instance Management</h1>
+            <Button onClick={() => setIsModalOpen(true)}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Instance
+            </Button>
+          </div>
+          <ListingTable
+            instances={initialInstances}
+            onDelete={handleDeleteInstance}
+          />
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
