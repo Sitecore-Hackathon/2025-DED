@@ -2,6 +2,7 @@
 
 import {
   BookOpen,
+  FileDown,
   GalleryVerticalEnd,
   Settings2,
   SquareTerminal,
@@ -46,7 +47,7 @@ const data = {
     {
       title: 'Content Export Tool',
       url: '#',
-      icon: SquareTerminal,
+      icon: FileDown,
       isActive: true,
       items: [
         {
