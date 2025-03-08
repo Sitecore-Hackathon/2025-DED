@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+    <configBuilders>
+        <builders>
+            <add name="SitecoreConnectionStringsBuilder" mode="Greedy" xdt:LOcator="Match(name)" xdt:Transform="SetAttributes(mode)" />
+        </builders>
+    </configBuilders>
+    <appSettings>
+        <add key="coveo:define" value="" xdt:Locator="Match(key)" xdt:Transform="Insert" />
+        <add key="damEnabled:define" value="" xdt:Locator="Match(key)" xdt:Transform="Insert" />
+        <add key="cmpEnabled:define" value="" xdt:Locator="Match(key)" xdt:Transform="Insert" />
+    </appSettings>
+    <system.webServer>
+        <handlers>
+            <add name="MediaHandler" verb="GET" path="dfsmedia/*/*-*" type="DFS.Services.Handlers.MediaHandler" xdt:Locator="Match(path)" xdt:Transform="Insert" />
+        </handlers>
+    </system.webServer>
+    <location path="sitecore">
+        <system.webServer>
+            <httpProtocol>
+                <customHeaders>
+                    <add name="Content-Security-Policy" value="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://apps.sitecore.net;  img-src 'self' data: https://s.gravatar.com https://*.wp.com/cdn.auth0.com/avatars https://velirsandbox2.sitecoresandbox.cloud/;           style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' 'unsafe-inline' https://fonts.gstatic.com; block-all-mixed-content; child-src 'self' https://velirsandbox2.sitecoresandbox.cloud/;          media-src https://velirsandbox2.sitecoresandbox.cloud/;" xdt:Locator="Match(name)" xdt:Transform="SetAttributes(value)" />
+                </customHeaders>
+            </httpProtocol>
+        </system.webServer>
+    </location>
+</configuration>
