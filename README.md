@@ -97,7 +97,7 @@ _Remove this subsection if your entry does not require any configuration that is
 ### Content Export Usage:
 
 1. Follow the In App Configuration section to to configure your instance settings
-   ![Instance Configuration](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/InstanceConfiguration.png
+   ![Instance Configuration](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/InstanceConfiguration.png)
 2. Navigate to the Content Export Tool (/Content/Export)
 3. Select your Instance from the dropdown
 4. Enter your filters
