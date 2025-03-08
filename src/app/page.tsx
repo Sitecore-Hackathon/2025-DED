@@ -1,12 +1,31 @@
+'use client';
+
 import { AppSidebar } from '@/components/app-sidebar';
 import { ContentExportStats } from '@/components/stats/content-export';
 import { CopilotRequestStats } from '@/components/stats/copilot-requests';
 import { InstanceStats } from '@/components/stats/instance';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from '@/components/ui/breadcrumb';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { Welcome } from '@/components/welcome';
+import { IInstance } from '@/models/IInstance';
 import { Separator } from '@radix-ui/react-separator';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  const [instances, setInstances] = useState<IInstance[]>([]);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem('instances');
+    if (saved) {
+      try {
+        const parsedInstances = JSON.parse(saved);
+        setInstances(parsedInstances);
+      } catch (error) {
+        console.error('Error parsing instances from sessionStorage:', error);
+      }
+    }
+  }, []);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -25,12 +44,18 @@ export default function Home() {
           </div>
         </header>
         <div className="container mx-auto py-6">
-          <h2 className="text-lg font-semibold">Dashboard</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <InstanceStats />
-            <ContentExportStats />
-            <CopilotRequestStats />
-          </div>
+          <h2 className="text-lg font-semibold mb-4">Dashboard</h2>
+          {instances ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <InstanceStats />
+                <ContentExportStats />
+                <CopilotRequestStats />
+              </div>
+            </>
+          ) : (
+            <Welcome />
+          )}
         </div>
       </SidebarInset>
     </SidebarProvider>
