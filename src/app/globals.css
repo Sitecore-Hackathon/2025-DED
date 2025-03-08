@@ -3,7 +3,6 @@
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
-/* @import '../styles/components/content-export.css'; */
 
 @theme inline {
   --color-background: var(--background);
@@ -124,4 +123,8 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.fixed {
+  z-index: 9;
 }

@@ -85,6 +85,7 @@ export const GetContentExportResults = (
     })
     .catch((error) => {
       console.error('Error:', error);
+      alert('Something went wrong. Check the console for errors');
       if (loadingModal) {
         loadingModal.style.display = 'none';
       }
