@@ -127,9 +127,6 @@ export const PostMutationQuery = (gqlEndpoint?: string, authToken?: string, csvD
 
     let fieldFragments = '';
     for (var property in row) {
-      console.log(property);
-      console.log(row[property]);
-
       if (
         property === 'Item Path' ||
         property === 'ID' ||
@@ -173,6 +170,7 @@ export const PostMutationQuery = (gqlEndpoint?: string, authToken?: string, csvD
   );
 };
 
+let errorHasBeenDisplayed = false;
 export const PostUpdateQuery = (gqlEndpoint: string, authToken: string, jsonQuery: string) => {
   fetch(gqlEndpoint, {
     method: 'POST',
@@ -187,6 +185,10 @@ export const PostUpdateQuery = (gqlEndpoint: string, authToken: string, jsonQuer
     })
     .catch((error) => {
       console.error('Error:', error);
-      alert('Something went wrong. Check the console for errors.');
+
+      if (!errorHasBeenDisplayed) {
+        alert('Something went wrong. Check the console for errors.');
+      }
+      errorHasBeenDisplayed = true;
     });
 };
