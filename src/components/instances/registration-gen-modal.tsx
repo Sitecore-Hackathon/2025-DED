@@ -1,4 +1,5 @@
 'use client';
+import { getAccessToken } from '@/app/services/sitecore/generateAccessToken';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -19,7 +20,7 @@ const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
   identityServerUrl: z.string().url({ message: 'Please enter a valid URL' }),
   sitecoreUsername: z.string().min(2, { message: 'Username must be at least 2 characters' }),
-  sitecorePassword: z.string().min(5, { message: 'Password must be at least 5 characters' }),
+  sitecorePassword: z.string().min(1, { message: 'Password must be at least 5 characters' }),
   clientId: z.string().min(2, { message: 'Client ID must be at least 2 characters' }),
   clientSecret: z.string().min(2, { message: 'Client Secret must be at least 2 characters' }),
   graphQlEndpoint: z.string().url({ message: 'Please enter a valid URL' }),
@@ -49,19 +50,30 @@ export const RegistrationGenModal = ({ open, onOpenChange, onSubmit }: InstanceR
     },
   });
 
-  const handleSubmit = (values: FormValues) => {
-    // TODO: Take passed in values to get back Accesstoken
+  const handleSubmit = async (values: FormValues) => {
+    try {
+      const tokenResponse = await getAccessToken(
+        values.identityServerUrl,
+        values.sitecoreUsername,
+        values.sitecorePassword,
+        values.clientId
+      );
 
-    onSubmit({
-      ...values,
-      instanceType: enumInstanceType.xp,
-    });
-    form.reset();
+      onSubmit({
+        name: values.name,
+        graphQlEndpoint: values.graphQlEndpoint,
+        instanceType: enumInstanceType.xp,
+        apiToken: tokenResponse.access_token,
+      });
+      form.reset();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Register New Instance</DialogTitle>
           <DialogDescription>Fill in the details to register a new instance to your configuration.</DialogDescription>
