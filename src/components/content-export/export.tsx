@@ -2,6 +2,10 @@ import { IInstance } from '@/models/IInstance';
 import { GetContentExportResults } from '@/services/sitecore/contentExportToolUtil';
 import { GetAvailableFields } from '@/services/sitecore/createGqlQuery';
 import { FC, useState } from 'react';
+import { Alert, AlertDescription } from '../ui/alert';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Textarea } from '../ui/textarea';
 
 interface ExportToolProps {
   activeInstance: IInstance | undefined;
@@ -47,106 +51,91 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
   };
 
   return (
-    <div className={'advanced ' + (exportOpen ? 'open open-default' : '')} id="divConfiguration">
-      <a className="advanced-btn" onClick={() => setExportOpen(!exportOpen)}>
-        Export
-      </a>
-      <div className="advanced-inner">
-        <div className="inner-section">
-          <h3>Export</h3>
-          <div className="container">
-            <div className="row">
-              <span className="header" id="startitems">
-                <b>Start Item(s)</b>
-              </span>
-              <a className="clear-btn" data-id="inputStartitem">
-                clear
-              </a>
-              <textarea
-                id="inputStartitem"
-                onInput={handleStartItem}
-                onChange={handleStartItem}
-                placeholder={'e.g. {D4D93D21-A8B4-4C0F-8025-251A38D9A04D}, {2745F1E8-1B06-4B08-9628-DEAE336F64F6}'}
+    <Card className="rounded-sm border bg-card p-6">
+      <CardHeader>
+        <CardTitle>Export Content</CardTitle>
+        <CardDescription>Export content from your Sitecore instance</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="space-y-4">
+          {/* Start Items Section */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Start Item(s)</label>
+              <Button variant="ghost" size="sm" onClick={() => setStartItem('')}>
+                Clear
+              </Button>
+            </div>
+            <Textarea
+              value={startItem}
+              onChange={handleStartItem}
+              placeholder="e.g. {D4D93D21-A8B4-4C0F-8025-251A38D9A04D}"
+              className="font-mono text-sm"
+            />
+            <Alert variant="info" className="mt-2">
+              <AlertDescription className="text-xs">
+                Enter GUIDs of starting nodes separated by commas. Only content beneath these nodes will be exported.
+              </AlertDescription>
+            </Alert>
+          </div>
+
+          {/* Templates Section */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Templates</label>
+              <Button variant="ghost" size="sm" onClick={() => setTemplates('')}>
+                Clear
+              </Button>
+            </div>
+            <Textarea
+              value={templates}
+              onChange={handleTemplates}
+              placeholder="e.g. {CC92A3D8-105C-4016-8BD7-22162C1ED919}"
+              className="font-mono text-sm"
+            />
+            <Alert variant="default" className="mt-2">
+              <AlertDescription className="text-xs">
+                Enter template GUIDs separated by commas. Leave blank to include all templates.
+              </AlertDescription>
+            </Alert>
+          </div>
+
+          {/* Fields Section */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Fields</label>
+              <Button variant="ghost" size="sm" onClick={() => setFields('')}>
+                Clear
+              </Button>
+            </div>
+            <Textarea
+              value={fields}
+              onChange={handleFields}
+              placeholder="e.g. title, image, taxonomies"
+              className="text-sm"
+            />
+
+            {/* Template Names for Field Browse */}
+            <div className="mt-4 space-y-2">
+              <label className="text-sm font-medium">Template Names (for field browsing)</label>
+              <Textarea
+                value={templateNames}
+                onChange={handleTemplateNames}
+                placeholder="e.g. Person, Whitepaper, LandingPage"
+                className="text-sm"
               />
-              <span className="border-notes">
-                Enter the ID of each starting node separated by commas (MUST BE GUIDs).
-                <br />
-                Only content beneath and including this node will be exported. If field is left blank, the starting node
-                will be /sitecore/content.
-              </span>
-            </div>
-
-            <div className="row">
-              <span className="header">
-                <b>Templates</b>
-              </span>
-              <a className="clear-btn" data-id="inputTemplates">
-                clear
-              </a>
-              <textarea
-                id="inputTemplates"
-                onInput={handleTemplates}
-                onChange={handleTemplates}
-                placeholder={'e.g. {CC92A3D8-105C-4016-8BD7-22162C1ED919}, {8C80272B-1910-4F3D-9A78-27012F04CEB0}'}
-              ></textarea>
-              <span className="border-notes">
-                Enter template IDs separated by commas (MUST BE GUIDs)
-                <br />
-                Items will only be exported if their template is in this list. If this field is left blank, all
-                templates will be included.
-              </span>
-              <div className="hints">
-                <a className="show-hints">Hints</a>
-                <span className="notes">{'Example: Standard Page, {12345678-901-2345-6789-012345678901}'}</span>
-              </div>
-            </div>
-
-            <div className="row">
-              <span className="header">
-                <b>Fields</b>
-              </span>
-              <a className="clear-btn" data-id="inputFields">
-                clear
-              </a>
-              <textarea
-                id="inputFields"
-                cols={60}
-                rows={5}
-                onInput={handleFields}
-                onChange={handleFields}
-                placeholder={'e.g. title, image, taxonomies'}
-              ></textarea>
-
-              <span className="border-notes">Enter field names separated by commas.</span>
-
-              <div className="">
-                <br />
-                <br />
-                <span className="header">
-                  <b>Browse Fields - input template names below, then click button to see available fields</b>
-                </span>
-                <span className="header">Template Names (for browse):</span>
-                <textarea
-                  id="txtFieldTemplates"
-                  cols={60}
-                  rows={5}
-                  onInput={handleTemplateNames}
-                  onChange={handleTemplateNames}
-                  placeholder={'e.g. Person, Whitepaper, LandingPage'}
-                ></textarea>
-                <button id="btnBrowseFields" onClick={() => browseFields()}>
+              <div className="flex items-center gap-2 mt-4">
+                <Button variant="secondary" size="sm" onClick={browseFields}>
                   Browse Fields
-                </button>
-                <span className="border-notes">
-                  Enter template NAMES separated by commas. This will not filter; it will only retrieve fields
-                </span>
+                </Button>
+                <Button variant="default" size="sm" onClick={runExport}>
+                  Run Export
+                </Button>
               </div>
-
-              <button onClick={() => runExport()}>Run Export</button>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };

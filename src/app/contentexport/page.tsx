@@ -46,7 +46,13 @@ export default function ContentExportPage() {
           </div>
         </header>
 
-        <ContentTransferTool instances={instances} />
+        <div className="container mx-auto py-6 px-4">
+          <div className="border bg-card text-card-foreground shadow-sm">
+            <div className="p-6">
+              <ContentTransferTool instances={instances} />
+            </div>
+          </div>
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

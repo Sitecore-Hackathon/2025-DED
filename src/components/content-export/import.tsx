@@ -2,6 +2,11 @@ import { IInstance } from '@/models/IInstance';
 import { PostMutationQuery } from '@/services/sitecore/contentExportToolUtil';
 import Papa from 'papaparse';
 import { FC, useState } from 'react';
+import { Alert, AlertDescription } from '../ui/alert';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Input } from '../ui/input';
+import { Separator } from '../ui/separator';
 
 interface ImportToolProps {
   activeInstance: IInstance | undefined;
@@ -59,98 +64,63 @@ export const ImportTool: FC<ImportToolProps> = ({ activeInstance }) => {
     }
   };
   return (
-    <div className="advanced open open-default" id="contentImport">
-      <a className="advanced-btn">Import</a>
-      <div className="advanced-inner">
-        <div className="row advanced-search">
-          <span className="uploadResponse"></span>
+    <Card className="rounded-sm border bg-card">
+      <CardHeader>
+        <CardTitle>Import Content</CardTitle>
+        <CardDescription>Import content from CSV files into your Sitecore instance</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <Input type="file" accept=".csv" onChange={onFileChange} className="cursor-pointer" />
+          <Button onClick={onFileUpload} disabled={!selectedFile}>
+            Import
+          </Button>
+        </div>
 
-          <div>
-            <input type="file" accept=".csv" onChange={onFileChange} />
-            <button onClick={onFileUpload}>Import!</button>
+        {selectedFile && (
+          <div className="rounded-md bg-muted p-4">
+            <h3 className="font-medium mb-2">File Details</h3>
+            <div className="space-y-1 text-sm">
+              <p>File Name: {selectedFile.name}</p>
+              <p>Type: {selectedFile.type}</p>
+              <p>Modified: {new Date(selectedFile.lastModified).toLocaleString()}</p>
+            </div>
           </div>
-          {fileData()}
+        )}
 
-          <br />
-          <span className="">
-            <b>Getting Started</b>
-            <br />
-            To create new items, CSV must include the following columns: <b>Item Path</b>, <b>Template</b>, <b>Name</b>.
-            In the Item Path field, put in the path of the parent item.
-            <br />
-            <br />
-            To edit existing items, CSV must include <b>Item Path</b>
-            <br />
-            <br />
-            By default, the import will NOT overwrite exising items, but will only create new items.
-            <br />
-            To overwrite existing items, uncheck the checkbox below
-            <br />
-            <br />
-            <br />
-            <br />
-          </span>
-
-          <br />
-          <br />
-
-          <h3>READ ME!</h3>
-          <p>
-            Use the import tool carefully! Make sure to review all modified items in Sitecore before publishing.
-            <br />
-            <br />
-            The <b>Update</b> option will only edit existing items (found using the Item Path) and will ignore items
-            that are not found.
-            <br />
-            <br />
-            The <b>Import</b> button will create new items under the Item Path. An item will not be created if an item
-            with the same path and template already exists, unless you uncheck "Do not create duplicates"
-          </p>
-
-          <h3>Tips:</h3>
-          <ul>
-            <li>
-              Files should be uploaded in <b>csv</b> format
-            </li>
-            <li>Item Path and Template can be either a full Sitecore path or a Guid ID</li>
-            <li>
-              Add a column for every field that you want to add/change content for with the field name or ID (e.g.
-              replace Field1 in the example template with a valid field name)
-              <ul>
+        <Alert>
+          <AlertDescription>
+            <div className="space-y-4">
+              <h3 className="font-medium">Getting Started</h3>
+              <p>Required CSV columns for new items:</p>
+              <ul className="list-disc pl-4 space-y-1">
                 <li>
-                  If you are editing content, it is recommended to export all the items with all fields you want to
-                  modify first, edit that file and then upload it
+                  <strong>Item Path</strong> - Parent item location
+                </li>
+                <li>
+                  <strong>Template</strong> - Item template
+                </li>
+                <li>
+                  <strong>Name</strong> - Item name
                 </li>
               </ul>
-            </li>
-            <li>
-              If you are modifying existing content, for best results run an export on that content first, make your
-              changes in the downloaded file and re-upload that file to import.
-            </li>
-            <li>
-              To <b>edit</b> content, Item Path must be the path of the item you with to edit.
-              <br />
-            </li>
-            <li>
-              To <b>create</b> content, the Item Path must be the path of the parent item you wish to create the new
-              item under (parent item must already exist);
-              <ul>
-                <li>Make sure to include Name and Template when creating items</li>
-                <li>Name and Template are not necessary for editing items</li>
-              </ul>
-            </li>
-            <li>
-              Note: The import function currently supports string, image, and link fields. It does not support more
-              complex field types, such as droplists or multilists.
-            </li>
 
-            <li>
-              <b>Language Versions</b>: To specify language, add a <b>Language</b> column. If no language is specified,
-              all items will be created/edited in the default language
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+              <Separator />
+
+              <div className="space-y-2">
+                <h3 className="font-medium">Important Notes</h3>
+                <ul className="list-disc pl-4 space-y-1 text-sm">
+                  <li>Review all modified items before publishing</li>
+                  <li>Only CSV format is supported</li>
+                  <li>Paths can be full Sitecore path or GUID</li>
+                  <li>Supports string, image, and link fields</li>
+                  <li>Add Language column for specific versions</li>
+                </ul>
+              </div>
+            </div>
+          </AlertDescription>
+        </Alert>
+      </CardContent>
+    </Card>
   );
 };
