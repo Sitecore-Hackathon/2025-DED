@@ -97,12 +97,12 @@ _Remove this subsection if your entry does not require any configuration that is
 ### Content Export Usage:
 
 1. Follow the In App Configuration section to to configure your instance settings
-   ![Instance Configuration](docs/images/instanceconfiguration.png)
+   ![Instance Configuration](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/InstanceConfiguration.png
 2. Navigate to the Content Export Tool (/Content/Export)
 3. Select your Instance from the dropdown
 4. Enter your filters
    - Start Item(s): One of more item IDs specifying where to pull content from, separated by comma. Defaults to the full content tree
    - Templates: One or more template ID to specify what types of items to export
    - Fields: All of the fields that you want included in the export. Null/invalid fields will return "n/a" in the export, so you can include fields that do not exist on all items
-     ![Export Page](docs/images/export.png)
+     ![Export Page](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/Export.png)
 5. Click Run Export and wait for your CSV to download!
