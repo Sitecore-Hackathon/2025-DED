@@ -104,9 +104,14 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium">Fields</label>
-              <Button variant="ghost" size="sm" onClick={() => setFields('')}>
-                Clear
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm" onClick={browseFields}>
+                  Browse Fields
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setFields('')}>
+                  Clear
+                </Button>
+              </div>
             </div>
             <Textarea
               value={fields}
@@ -125,9 +130,6 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
                 className="text-sm"
               />
               <div className="flex items-center gap-2 mt-4">
-                <Button variant="secondary" size="sm" onClick={browseFields}>
-                  Browse Fields
-                </Button>
                 <Button variant="default" size="sm" onClick={runExport}>
                   Run Export
                 </Button>
