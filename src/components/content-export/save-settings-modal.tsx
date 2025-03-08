@@ -5,6 +5,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { ISettings } from '@/models/ISettings';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AlertDialog } from '@radix-ui/react-alert-dialog';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -28,12 +30,33 @@ export const SaveSettingsModal = ({ open, onOpenChange, onSubmit }: InstanceSett
     },
   });
 
+  const [savedSettings, setSavedSettings] = useState<ISettings[]>([]);
+  const [showOverwrite, setShowOverwrite] = useState<boolean>(false);
+
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('settings');
+      if (saved) {
+        const parsedSettings = JSON.parse(saved) as ISettings[];
+        setSavedSettings(parsedSettings);
+      }
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    }
+  }, []);
+
   // Add this line to watch the instanceType field
   const handleSubmit = (values: FormValues) => {
-    onSubmit(values);
-    form.reset();
-    alert('Saved!');
-    open = false;
+    setShowOverwrite(false);
+    const setting = savedSettings.find((setting) => setting.name === values.name);
+
+    if (setting) {
+      setShowOverwrite(true);
+    } else {
+      onSubmit(values);
+      form.reset();
+      alert('Saved!');
+    }
   };
 
   return (
@@ -59,12 +82,29 @@ export const SaveSettingsModal = ({ open, onOpenChange, onSubmit }: InstanceSett
               )}
             />
 
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">Save Settings</Button>
-            </DialogFooter>
+            {!showOverwrite ? (
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Save Settings</Button>
+              </DialogFooter>
+            ) : (
+              <DialogFooter>
+                <AlertDialog>Settings with this name already exist! Do you want to overwrite?</AlertDialog>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowOverwrite(false);
+                    onOpenChange(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">Yes, Overwrite</Button>
+              </DialogFooter>
+            )}
           </form>
         </Form>
       </DialogContent>

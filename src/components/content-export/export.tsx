@@ -61,6 +61,9 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
     const settings: ISettings = {
       ...newSettings,
       id: crypto.randomUUID(),
+      startItem: startItem ?? '',
+      templates: templates ?? '',
+      fields: fields ?? '',
     };
 
     const updatedSavedSettings = [...savedSettings, settings];
