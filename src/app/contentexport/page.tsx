@@ -12,7 +12,8 @@ import ContentExportSearchStyles from '@/components/ui/ContentExportStyles';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@radix-ui/react-separator';
 import { useState } from 'react';
-import { GetAvailableFields, GetSearchQuery } from '../Util/CreateGQLQuery';
+import { GetContentExportResults } from '../Util/contentExportToolUtil';
+import { GetAvailableFields } from '../Util/CreateGQLQuery';
 
 export default function InstanceSetupPage() {
   const [configurationOpen, setConfigurationOpen] = useState<boolean>(true);
@@ -64,26 +65,9 @@ export default function InstanceSetupPage() {
   };
 
   const runExport = () => {
-    const query = GetSearchQuery(gqlEndpoint, gqlApiKey, startItem, templates, fields);
-    console.log(query);
+    const csvData = GetContentExportResults(gqlEndpoint, gqlApiKey, startItem, templates, fields);
 
-    if (!gqlEndpoint || !gqlApiKey) {
-      return;
-    }
-
-    fetch(gqlEndpoint, {
-      method: 'POST',
-      headers: new Headers({ sc_apikey: gqlApiKey, 'content-type': 'application/json' }),
-      body: query,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('RESULTS: ');
-        console.log(data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+    // output csvData!
   };
 
   const browseFields = () => {
