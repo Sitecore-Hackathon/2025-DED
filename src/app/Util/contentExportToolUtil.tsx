@@ -1,4 +1,5 @@
 import { GetSearchQuery } from './CreateGQLQuery';
+import { UpdateQueryTemplate } from './UpdateQueryTemplate';
 
 export const GetContentExportResults = (
   gqlEndpoint?: string,
@@ -81,6 +82,105 @@ export const GetContentExportResults = (
       }
 
       alert('Done - check your downloads!');
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      if (loadingModal) {
+        loadingModal.style.display = 'none';
+      }
+    });
+};
+
+export const PostMutationQuery = (gqlEndpoint?: string, authToken?: string, csvData?: any[]): void => {
+  // show loading modal
+  const loadingModal = document.getElementById('loading-modal');
+  if (loadingModal) {
+    loadingModal.style.display = 'block';
+  }
+
+  //const query = GetSearchQuery(gqlEndpoint, gqlApiKey, startItem, templates, fields);
+
+  if (!gqlEndpoint || !authToken) {
+    alert('Select an Instance with an Auth token');
+    return;
+  }
+
+  if (!csvData) {
+    alert('No file data found');
+    return;
+  }
+
+  let queries = [];
+
+  // iterate through requests
+  for (var i = 0; i < csvData.length; i++) {
+    let query = UpdateQueryTemplate;
+
+    const row = csvData[i];
+    query = query.replace('pathFragment', row['Item Path']);
+
+    if (row['Language']) {
+      const languageFragment = `language: "` + row['Language'] + `"`;
+      query.replace('languageFragment', languageFragment);
+    } else {
+      query.replace('languageFragment', '');
+    }
+
+    let fieldFragments = '';
+    for (var property in row) {
+      console.log(property);
+      console.log(row[property]);
+
+      if (
+        property === 'Item Name' ||
+        property === 'ID' ||
+        property === 'Name' ||
+        property === 'Language' ||
+        property === ''
+      ) {
+        continue;
+      }
+
+      const value = row[property];
+      const fieldFragment =
+        `
+        { name: "` +
+        property +
+        `", value: "` +
+        value.replace('"', '&quot;') +
+        `" }`;
+
+      fieldFragments += fieldFragment;
+    }
+
+    query = query.replace('fieldsFragment', fieldFragments);
+
+    const jsonQuery = {
+      query: query,
+    };
+
+    console.log(jsonQuery);
+    queries.push(jsonQuery);
+  }
+
+  Promise.all(queries.map((query) => PostUpdateQuery(gqlEndpoint, authToken, JSON.stringify(query)))).then((results) =>
+    results.forEach((result) => console.log(result))
+  );
+};
+
+export const PostUpdateQuery = (gqlEndpoint: string, authToken: string, jsonQuery: string) => {
+  const loadingModal = document.getElementById('loading-modal');
+
+  fetch(gqlEndpoint, {
+    method: 'POST',
+    headers: new Headers({ Authorization: 'Bearer ' + authToken, 'content-type': 'application/json' }),
+    body: JSON.stringify(jsonQuery),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // parse data
+      const results = data;
+      console.log(results);
     })
     .catch((error) => {
       console.error('Error:', error);

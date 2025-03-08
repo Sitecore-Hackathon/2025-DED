@@ -15,7 +15,7 @@ import { enumInstanceType, IInstance } from '@/models/IInstance';
 import { Separator } from '@radix-ui/react-separator';
 import Papa from 'papaparse';
 import { useState } from 'react';
-import { GetContentExportResults } from '../Util/contentExportToolUtil';
+import { GetContentExportResults, PostMutationQuery } from '../Util/contentExportToolUtil';
 import { GetAvailableFields } from '../Util/CreateGQLQuery';
 
 export default function InstanceSetupPage() {
@@ -110,7 +110,8 @@ export default function InstanceSetupPage() {
       skipEmptyLines: true,
       complete: function (results) {
         console.log(results.data);
-        alert('Done, check console -->');
+
+        PostMutationQuery(activeInstance?.graphQlEndpoint, activeInstance?.apiToken, results.data);
       },
     });
   };
