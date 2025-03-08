@@ -5,7 +5,7 @@ import { enumModels } from '@/models/enumModels';
 import { IInstance } from '@/models/IInstance';
 import { IToken } from '@/models/IToken';
 import { useChat } from '@ai-sdk/react';
-import { ArrowUpRight, Brain, Loader2 } from 'lucide-react';
+import { ArrowUpRight, Brain, Loader2, RefreshCw, Send } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { ScrollArea } from '../ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 interface CopilotChatProps {
   instances: IInstance[];
@@ -28,11 +29,13 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
     body: {
       instanceData: selectedInstance,
       tokenData: token,
+      model: selectedModel,
     },
   });
 
   // Reference to the messages div for scrolling
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Function to scroll to bottom
   const scrollToBottom = () => {
@@ -43,6 +46,14 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Auto-resize textarea based on content
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
+    }
+  }, [input]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -76,12 +87,49 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
     ]);
   };
 
+  // Preset message options
+  const presetMessages = [
+    { label: 'Get Content', value: 'How do I export content?' },
+    { label: 'Generate a CSV', value: 'Now that I have my data can you convert it to CSV format?' },
+    {
+      label: 'Profile the Content',
+      value: 'Take my existing data and create a content profile for each piece of content?',
+    },
+  ];
+
   return (
-    <Card className="h-[calc(100vh-10rem)] flex flex-col">
-      <CardHeader className="px-4 py-3">
-        <div className="flex items-center gap-2">
-          <Brain className="h-6 w-6" />
-          <CardTitle>Content Copilot</CardTitle>
+    <Card className="h-[calc(100vh-10rem)] flex flex-col shadow-md">
+      <CardHeader className="px-4 py-3 border-b">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Brain className="h-5 w-5 text-primary" />
+            <CardTitle>Content Copilot</CardTitle>
+          </div>
+          <div className="flex gap-2">
+            <Select
+              value={selectedInstance?.id}
+              onValueChange={(id) => setSelectedInstance(instances.find((i) => i.id === id))}
+            >
+              <SelectTrigger className="w-[180px] h-8 text-xs">
+                <SelectValue placeholder="Select instance" />
+              </SelectTrigger>
+              <SelectContent>
+                {instances.map((instance) => (
+                  <SelectItem key={instance.id} value={instance.id}>
+                    {instance.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={selectedModel} onValueChange={(value: enumModels) => setSelectedModel(value)}>
+              <SelectTrigger className="w-[120px] h-8 text-xs">
+                <SelectValue placeholder="Select model" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={enumModels.gpt4omini}>GPT-4 Mini</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col overflow-hidden p-0">
@@ -90,15 +138,15 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
           <ScrollArea className="h-full w-full pr-1">
             <div className="flex flex-col gap-4 p-4">
               {messages.map((m) => (
-                <div key={m.id} className="flex gap-4 min-w-0">
+                <div key={m.id} className="flex gap-4 min-w-0 animate-fadeIn">
                   {m.role === 'assistant' && (
                     <div className="mt-2 shrink-0">
-                      <Brain />
+                      <Brain className="h-5 w-5 text-primary" />
                     </div>
                   )}
                   <div
                     className={cn(
-                      'flex-1 px-4 py-4 rounded-sm break-words',
+                      'flex-1 px-4 py-3 rounded-lg break-words',
                       m.role === 'assistant' ? 'bg-muted' : 'bg-primary/10'
                     )}
                   >
@@ -109,14 +157,24 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
                           code({ node, ...props }) {
                             const match = /language-(\w+)/.exec(props.className || '');
                             return !(props as any).inline ? (
-                              <pre className="my-4 p-4 bg-muted-foreground/10 rounded-lg overflow-x-auto">
-                                <code
-                                  className={cn('relative font-mono text-sm', match?.[1] && `language-${match[1]}`)}
-                                  {...props}
+                              <div className="relative">
+                                <pre className="my-4 p-4 bg-muted-foreground/10 rounded-lg overflow-x-auto">
+                                  <code
+                                    className={cn('font-mono text-sm', match?.[1] && `language-${match[1]}`)}
+                                    {...props}
+                                  >
+                                    {String(props.children).replace(/\n$/, '')}
+                                  </code>
+                                </pre>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="absolute right-2 top-2 h-7 opacity-70 hover:opacity-100"
+                                  onClick={() => navigator.clipboard.writeText(String(props.children))}
                                 >
-                                  {String(props.children).replace(/\n$/, '')}
-                                </code>
-                              </pre>
+                                  Copy
+                                </Button>
+                              </div>
                             ) : (
                               <code
                                 className="bg-muted-foreground/20 px-1.5 py-0.5 rounded-md font-mono text-sm"
@@ -127,13 +185,16 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
                             );
                           },
                           ul({ children }) {
-                            return <ul className="list-disc pl-6 my-4">{children}</ul>;
+                            return <ul className="list-disc pl-6 my-3">{children}</ul>;
                           },
                           ol({ children }) {
-                            return <ol className="list-decimal pl-6 my-4">{children}</ol>;
+                            return <ol className="list-decimal pl-6 my-3">{children}</ol>;
                           },
                           li({ children }) {
-                            return <li className="mb-2">{children}</li>;
+                            return <li className="mb-1">{children}</li>;
+                          },
+                          p({ children }) {
+                            return <p className="mb-3 last:mb-0">{children}</p>;
                           },
                         }}
                       >
@@ -148,10 +209,13 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
               {isLoading && (
                 <div className="flex gap-4 min-w-0">
                   <div className="mt-2 shrink-0">
-                    <Brain className="h-5 w-5" />
+                    <Brain className="h-5 w-5 text-primary" />
                   </div>
-                  <div className="flex-1 px-4 py-4 rounded-sm break-words bg-muted">
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                  <div className="flex-1 px-4 py-4 rounded-lg break-words bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-sm text-muted-foreground">Generating response...</span>
+                    </div>
                   </div>
                 </div>
               )}
@@ -162,90 +226,68 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
 
         {/* Input form with fixed position at bottom */}
         <div className="border-t border-border mt-auto">
-          <form onSubmit={handleSubmit} className="p-4 space-y-4 bg-background">
-            {/* Selectors above textarea */}
-            <div className="flex gap-2">
-              <Select
-                value={selectedInstance?.id}
-                onValueChange={(id) => setSelectedInstance(instances.find((i) => i.id === id))}
-              >
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select instance" />
-                </SelectTrigger>
-                <SelectContent>
-                  {instances.map((instance) => (
-                    <SelectItem key={instance.id} value={instance.id}>
-                      {instance.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={selectedModel} onValueChange={(value: enumModels) => setSelectedModel(value)}>
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Select model" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={enumModels.gpt4omini}>GPT-4 Mini</SelectItem>
-                </SelectContent>
-              </Select>
+          <form onSubmit={handleSubmit} className="p-4 space-y-3 bg-background">
+            {/* Preset message buttons */}
+            <div className="flex flex-wrap gap-2">
+              {presetMessages.map((preset, index) => (
+                <Button
+                  key={index}
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="text-xs h-8"
+                  onClick={() => handleInputChange({ target: { value: preset.value } } as any)}
+                >
+                  {preset.label}
+                  <ArrowUpRight className="ml-1 h-3 w-3" />
+                </Button>
+              ))}
             </div>
 
-            {/* Textarea */}
-            <Textarea
-              onKeyDown={handleKeyDown}
-              value={input}
-              onChange={handleInputChange}
-              placeholder="Ask about content operations..."
-              className="min-h-[80px] resize-none"
-              disabled={isLoading || !selectedInstance}
-            />
+            {/* Textarea and send button */}
+            <div className="relative">
+              <Textarea
+                ref={textareaRef}
+                onKeyDown={handleKeyDown}
+                value={input}
+                onChange={handleInputChange}
+                placeholder="Ask about content operations..."
+                className="pr-12 min-h-[80px] max-h-[200px] resize-none"
+                disabled={isLoading || !selectedInstance}
+              />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="submit"
+                      size="sm"
+                      className="absolute right-2 bottom-2 h-8 w-8 p-0"
+                      disabled={isLoading || !selectedInstance || !input.trim()}
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Send message</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
 
-            {/* Action buttons */}
+            {/* Footer with action buttons */}
             <div className="flex justify-between items-center">
-              <div className="flex gap-2 flex-wrap">
-                <Button
-                  variant="ghost"
-                  className="cursor-pointer"
-                  onClick={() => handleInputChange({ target: { value: 'How do I export content?' } } as any)}
-                >
-                  Get Content
-                  <ArrowUpRight />
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="cursor-pointer"
-                  onClick={() =>
-                    handleInputChange({
-                      target: { value: 'Now that I have my data can you convert it to CSV format?' },
-                    } as any)
-                  }
-                >
-                  Generate a CSV
-                  <ArrowUpRight />
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="cursor-pointer"
-                  onClick={() =>
-                    handleInputChange({
-                      target: {
-                        value: 'Take my existing data and create a content profile for each piece of content ?',
-                      },
-                    } as any)
-                  }
-                >
-                  Profile the Content
-                  <ArrowUpRight />
-                </Button>
+              <div className="flex items-center">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button type="button" variant="ghost" size="sm" onClick={handleClearChat}>
+                        <RefreshCw className="h-4 w-4 mr-1" />
+                        Clear chat
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Start a new conversation</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
-              <div className="flex gap-2">
-                <Button type="button" variant="ghost" onClick={handleClearChat}>
-                  Clear
-                </Button>
-                <Button type="submit" disabled={isLoading || !selectedInstance}>
-                  Send
-                </Button>
-              </div>
+              <div className="text-xs text-muted-foreground">Press Enter to send, Shift+Enter for new line</div>
             </div>
           </form>
         </div>
