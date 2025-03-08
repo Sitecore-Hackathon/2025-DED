@@ -58,16 +58,16 @@ To run the application locally, using Node, run the following commands:
    > Using nvm? Run these commands:
    >
    > ```bash
-   > nvm install 22.13.1
-   > nvm use 22.13.1
+   > $ nvm install 22.13.1
+   > $ nvm use 22.13.1
    > ```
 2. Install dependencies:
    ```bash
-   npm install
+   $ npm install
    ```
 3. Start the local development server:
    ```bash
-   npm run dev
+   $ npm run dev
    ```
 4. Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
 
