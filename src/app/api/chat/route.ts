@@ -1,44 +1,103 @@
 import { IInstance } from '@/models/IInstance';
 import { IToken } from '@/models/IToken';
+import { GetContentExportResults } from '@/services/sitecore/contentExportToolUtil';
 import { createOpenAI } from '@ai-sdk/openai';
 import { streamText } from 'ai';
+import { z } from 'zod';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 interface ChatRequest {
   messages: any[];
-  instanceData: IInstance;
+  instanceData: IInstance[];
   tokenData: IToken;
+  model: string;
 }
 
 export async function POST(req: Request) {
-  const { messages, instanceData, tokenData }: ChatRequest = await req.json();
+  const { messages, instanceData, tokenData, model = 'gpt-4o-mini' }: ChatRequest = await req.json();
 
-  console.log('messages', messages);
+  // TODO: Add Instance selector to the form and pass that through
+  const activeInstance = Array.isArray(instanceData) ? instanceData[0] : instanceData;
+
+  console.log('Active Instance:', activeInstance);
 
   const openAiClient = createOpenAI({
     apiKey: tokenData.token,
   });
 
+  const systemPrompt = {
+    role: 'system',
+    content: `You are a Sitecore Content Operations expert assistant. 
+    You have access to the following Sitecore instance: ${activeInstance.name} (${activeInstance.instanceType}).
+
+    Instructions
+    - Always ask to confirm before running any functions
+    - Tool is for Marketers, so avoid showing how to do the request programmatically
+    
+    Format your responses using markdown:
+    - Use **bold** for important concepts
+    - Use bullet points for lists
+    - Keep responses concise and practical
+    - Break up long responses with headings
+    
+    Respond concisely and focus on practical solutions.`,
+  };
+
   const result = streamText({
-    model: openAiClient('gpt-4o-mini'),
-    messages,
-    // tools: {
-    //   weather: tool({
-    //     description: 'Get the weather in a location (fahrenheit)',
-    //     parameters: z.object({
-    //       location: z.string().describe('The location to get the weather for'),
-    //     }),
-    //     execute: async ({ location }) => {
-    //       const temperature = Math.round(Math.random() * (90 - 32) + 32);
-    //       return {
-    //         location,
-    //         temperature,
-    //       };
-    //     },
-    //   }),
-    // },
+    model: openAiClient(model),
+    messages: [systemPrompt, ...messages],
+    tools: {
+      get_content: {
+        description: 'Get content from a Sitecore instance',
+        parameters: z.object({
+          startItem: z.string().describe('The item to start exporting from, must be a valid Guid'),
+          templates: z.string().describe('The templates to export, must be a valid guid'),
+          fields: z.string().describe('The fields to export'),
+        }),
+        execute: async ({ startItem, templates, fields }) => {
+          try {
+            if (!activeInstance || !activeInstance.name) {
+              return {
+                result: {
+                  error: 'Invalid instance configuration',
+                },
+              };
+            }
+
+            const fnResult = await GetContentExportResults(
+              activeInstance.graphQlEndpoint,
+              activeInstance.apiToken,
+              startItem,
+              templates,
+              fields
+            );
+
+            if (Array.isArray(fnResult) && fnResult.length > 100) {
+              return {
+                result: {
+                  data: fnResult.slice(0, 100),
+                  message: 'Results limited to first 100 items',
+                  total: fnResult.length,
+                },
+              };
+            }
+
+            return {
+              result: fnResult || { error: 'No content found' },
+            };
+          } catch (error) {
+            console.log(error);
+            return {
+              result: {
+                error: error instanceof Error ? error.message : 'An error occurred fetching content',
+              },
+            };
+          }
+        },
+      },
+    },
   });
 
   return result.toDataStreamResponse();

@@ -39,7 +39,7 @@ export default function CopilotPage() {
         const parsedTokens = JSON.parse(savedTokens);
         const openAIConfig = parsedTokens.find((token: any) => token.type === enumTokenTypes.OpenAI);
         if (openAIConfig) {
-          setOpenAIToken(openAIConfig.token);
+          setOpenAIToken(openAIConfig);
         }
       } catch (error) {
         console.error('Error parsing tokens from sessionStorage:', error);
@@ -70,7 +70,7 @@ export default function CopilotPage() {
         </header>
 
         <div className="container mx-auto py-6 px-4">
-          <div className="bg-card text-card-foreground shadow-sm">
+          <div className="">
             <div className="p-6">
               {openAiToken ? (
                 <CopilotChat token={openAiToken} instances={instances} />
