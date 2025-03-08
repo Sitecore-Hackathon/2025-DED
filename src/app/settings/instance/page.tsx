@@ -63,7 +63,7 @@ const initialData: ITreeItem[] = [
     },
 ];
 
-export default function Home() {
+export default function InstanceSetupPage() {
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -78,17 +78,21 @@ export default function Home() {
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="#">
+                                    <BreadcrumbLink href="/">
                                         Dashboard
                                     </BreadcrumbLink>
+                                </BreadcrumbItem>
+                                <BreadcrumbSeparator className="hidden md:block" />
+                                <BreadcrumbItem>
+                                    <BreadcrumbPage>
+                                        Instance Configuration
+                                    </BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
                     </div>
                 </header>
-                <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                    <ItemListingComponent data={initialData} />
-                </div>
+                <div className="flex flex-1 flex-col gap-4 p-4 pt-0">WIP</div>
             </SidebarInset>
         </SidebarProvider>
     );
