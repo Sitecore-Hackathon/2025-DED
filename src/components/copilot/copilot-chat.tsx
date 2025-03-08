@@ -1,16 +1,18 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { enumModels } from '@/models/enumModels';
 import { IInstance } from '@/models/IInstance';
 import { IToken } from '@/models/IToken';
 import { useChat } from '@ai-sdk/react';
 import { ArrowUpRight, Brain, Loader2 } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { ScrollArea } from '../ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
 
 interface CopilotChatProps {
@@ -19,10 +21,12 @@ interface CopilotChatProps {
 }
 
 export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) => {
+  const [selectedInstance, setSelectedInstance] = useState<IInstance | undefined>(instances[0]);
+  const [selectedModel, setSelectedModel] = useState<enumModels | undefined>(enumModels.gpt4omini);
   const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: '/api/chat',
     body: {
-      instanceData: instances,
+      instanceData: selectedInstance,
       tokenData: token,
     },
   });
@@ -159,13 +163,44 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
         {/* Input form with fixed position at bottom */}
         <div className="border-t border-border mt-auto">
           <form onSubmit={handleSubmit} className="p-4 space-y-4 bg-background">
+            {/* Selectors above textarea */}
+            <div className="flex gap-2">
+              <Select
+                value={selectedInstance?.id}
+                onValueChange={(id) => setSelectedInstance(instances.find((i) => i.id === id))}
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select instance" />
+                </SelectTrigger>
+                <SelectContent>
+                  {instances.map((instance) => (
+                    <SelectItem key={instance.id} value={instance.id}>
+                      {instance.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={selectedModel} onValueChange={(value: enumModels) => setSelectedModel(value)}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Select model" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={enumModels.gpt4omini}>GPT-4 Mini</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Textarea */}
             <Textarea
               onKeyDown={handleKeyDown}
               value={input}
               onChange={handleInputChange}
               placeholder="Ask about content operations..."
               className="min-h-[80px] resize-none"
+              disabled={isLoading || !selectedInstance}
             />
+
+            {/* Action buttons */}
             <div className="flex justify-between items-center">
               <div className="flex gap-2 flex-wrap">
                 <Button
@@ -173,23 +208,41 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
                   className="cursor-pointer"
                   onClick={() => handleInputChange({ target: { value: 'How do I export content?' } } as any)}
                 >
-                  Export content
+                  Get Content
                   <ArrowUpRight />
                 </Button>
                 <Button
                   variant="ghost"
                   className="cursor-pointer"
-                  onClick={() => handleInputChange({ target: { value: 'What fields should I include?' } } as any)}
+                  onClick={() =>
+                    handleInputChange({
+                      target: { value: 'Now that I have my data can you convert it to CSV format?' },
+                    } as any)
+                  }
                 >
-                  Field selection
+                  Generate a CSV
+                  <ArrowUpRight />
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="cursor-pointer"
+                  onClick={() =>
+                    handleInputChange({
+                      target: {
+                        value: 'Take my existing data and create a content profile for each piece of content ?',
+                      },
+                    } as any)
+                  }
+                >
+                  Profile the Content
                   <ArrowUpRight />
                 </Button>
               </div>
               <div className="flex gap-2">
-                <Button type="button" variant="ghost" className="cursor-pointer" onClick={handleClearChat}>
+                <Button type="button" variant="ghost" onClick={handleClearChat}>
                   Clear
                 </Button>
-                <Button type="submit" className="cursor-pointer">
+                <Button type="submit" disabled={isLoading || !selectedInstance}>
                   Send
                 </Button>
               </div>

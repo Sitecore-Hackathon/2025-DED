@@ -10,7 +10,7 @@ export const maxDuration = 30;
 
 interface ChatRequest {
   messages: any[];
-  instanceData: IInstance[];
+  instanceData: IInstance;
   tokenData: IToken;
   model: string;
 }
@@ -18,10 +18,7 @@ interface ChatRequest {
 export async function POST(req: Request) {
   const { messages, instanceData, tokenData, model = 'gpt-4o-mini' }: ChatRequest = await req.json();
 
-  // TODO: Add Instance selector to the form and pass that through
-  const activeInstance = Array.isArray(instanceData) ? instanceData[0] : instanceData;
-
-  console.log('Active Instance:', activeInstance);
+  console.log('Chat request:', { messages, instanceData, tokenData, model });
 
   const openAiClient = createOpenAI({
     apiKey: tokenData.token,
@@ -30,7 +27,7 @@ export async function POST(req: Request) {
   const systemPrompt = {
     role: 'system',
     content: `You are a Sitecore Content Operations expert assistant. 
-    You have access to the following Sitecore instance: ${activeInstance.name} (${activeInstance.instanceType}).
+    You have access to the following Sitecore instance: ${instanceData.name} (${instanceData.instanceType}).
 
     Instructions
     - Always ask to confirm before running any functions
@@ -58,7 +55,7 @@ export async function POST(req: Request) {
         }),
         execute: async ({ startItem, templates, fields }) => {
           try {
-            if (!activeInstance || !activeInstance.name) {
+            if (!instanceData || !instanceData.name) {
               return {
                 result: {
                   error: 'Invalid instance configuration',
@@ -67,8 +64,8 @@ export async function POST(req: Request) {
             }
 
             const fnResult = await GetContentExportResults(
-              activeInstance.graphQlEndpoint,
-              activeInstance.apiToken,
+              instanceData.graphQlEndpoint,
+              instanceData.apiToken,
               startItem,
               templates,
               fields
