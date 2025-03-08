@@ -1,5 +1,5 @@
 export const SearchQueryTemplate = `
-query {
+{
     pageOne: search(
         where: {
         AND: [

@@ -9,11 +9,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import ContentExportSearchStyles from '@/components/ui/ContentExportStyles';
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@radix-ui/react-separator';
 import { useState } from 'react';
 import { GetAvailableFields, GetSearchQuery } from '../Util/CreateGQLQuery';
@@ -48,14 +44,10 @@ export default function InstanceSetupPage() {
   const handleFields = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setFields(event.target.value);
   };
-  const handleTemplateNames = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
+  const handleTemplateNames = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTemplateNames(event.target.value);
   };
-  const handleIdentityServer = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
+  const handleIdentityServer = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setIdServer(event.target.value);
   };
   const handleUsername = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -67,28 +59,36 @@ export default function InstanceSetupPage() {
   const handleClientId = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setClientId(event.target.value);
   };
-  const handleClientSecret = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
+  const handleClientSecret = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setClientSecret(event.target.value);
   };
 
   const runExport = () => {
-    const query = GetSearchQuery(
-      gqlEndpoint,
-      gqlApiKey,
-      startItem,
-      templates,
-      fields
-    );
+    const query = GetSearchQuery(gqlEndpoint, gqlApiKey, startItem, templates, fields);
     console.log(query);
+
+    if (!gqlEndpoint || !gqlApiKey) {
+      return;
+    }
+
+    fetch(gqlEndpoint, {
+      method: 'POST',
+      headers: new Headers({ sc_apikey: gqlApiKey, 'content-type': 'application/json' }),
+      body: query,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('RESULTS: ');
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   };
 
   const browseFields = () => {
     if (!templateNames) {
-      alert(
-        'Enter Template Names (below the Fields input) to get available fields'
-      );
+      alert('Enter Template Names (below the Fields input) to get available fields');
       return;
     }
     const queries = GetAvailableFields(templateNames);
@@ -102,10 +102,7 @@ export default function InstanceSetupPage() {
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
+            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
@@ -124,16 +121,8 @@ export default function InstanceSetupPage() {
           <ContentExportSearchStyles />
           <h1 className="text-2xl font-bold">Content Export Tool</h1>
 
-          <div
-            className={
-              'advanced ' + (configurationOpen ? 'open open-default' : '')
-            }
-            id="divConfiguration"
-          >
-            <a
-              className="advanced-btn"
-              onClick={() => setConfigurationOpen(!configurationOpen)}
-            >
+          <div className={'advanced ' + (configurationOpen ? 'open open-default' : '')} id="divConfiguration">
+            <a className="advanced-btn" onClick={() => setConfigurationOpen(!configurationOpen)}>
               Configuration
             </a>
             <div className="advanced-inner">
@@ -147,9 +136,7 @@ export default function InstanceSetupPage() {
                       id="txtGqlEndpoint"
                       onInput={handleGqlEndpoint}
                       onChange={handleGqlEndpoint}
-                      placeholder={
-                        'e.g. https://edge.sitecorecloud.io/api/graphql/v1'
-                      }
+                      placeholder={'e.g. https://edge.sitecorecloud.io/api/graphql/v1'}
                     />
                   </div>
                   <div className="row">
@@ -213,14 +200,8 @@ export default function InstanceSetupPage() {
             </div>
           </div>
 
-          <div
-            className={'advanced ' + (exportOpen ? 'open open-default' : '')}
-            id="divConfiguration"
-          >
-            <a
-              className="advanced-btn"
-              onClick={() => setExportOpen(!exportOpen)}
-            >
+          <div className={'advanced ' + (exportOpen ? 'open open-default' : '')} id="divConfiguration">
+            <a className="advanced-btn" onClick={() => setExportOpen(!exportOpen)}>
               Export
             </a>
             <div className="advanced-inner">
@@ -243,12 +224,10 @@ export default function InstanceSetupPage() {
                       }
                     />
                     <span className="border-notes">
-                      Enter the ID of each starting node separated by commas
-                      (MUST BE GUIDs).
+                      Enter the ID of each starting node separated by commas (MUST BE GUIDs).
                       <br />
-                      Only content beneath and including this node will be
-                      exported. If field is left blank, the starting node will
-                      be /sitecore/content.
+                      Only content beneath and including this node will be exported. If field is left blank, the
+                      starting node will be /sitecore/content.
                     </span>
                   </div>
 
@@ -270,17 +249,12 @@ export default function InstanceSetupPage() {
                     <span className="border-notes">
                       Enter template IDs separated by commas (MUST BE GUIDs)
                       <br />
-                      Items will only be exported if their template is in this
-                      list. If this field is left blank, all templates will be
-                      included.
+                      Items will only be exported if their template is in this list. If this field is left blank, all
+                      templates will be included.
                     </span>
                     <div className="hints">
                       <a className="show-hints">Hints</a>
-                      <span className="notes">
-                        {
-                          'Example: Standard Page, {12345678-901-2345-6789-012345678901}'
-                        }
-                      </span>
+                      <span className="notes">{'Example: Standard Page, {12345678-901-2345-6789-012345678901}'}</span>
                     </div>
                   </div>
 
@@ -300,22 +274,15 @@ export default function InstanceSetupPage() {
                       placeholder={'e.g. title, image, taxonomies'}
                     ></textarea>
 
-                    <span className="border-notes">
-                      Enter field names separated by commas.
-                    </span>
+                    <span className="border-notes">Enter field names separated by commas.</span>
 
                     <div className="">
                       <br />
                       <br />
                       <span className="header">
-                        <b>
-                          Browse Fields - input template names below, then click
-                          button to see available fields
-                        </b>
+                        <b>Browse Fields - input template names below, then click button to see available fields</b>
                       </span>
-                      <span className="header">
-                        Template Names (for browse):
-                      </span>
+                      <span className="header">Template Names (for browse):</span>
                       <textarea
                         id="txtFieldTemplates"
                         cols={60}
@@ -324,15 +291,11 @@ export default function InstanceSetupPage() {
                         onChange={handleTemplateNames}
                         placeholder={'e.g. Person, Whitepaper, LandingPage'}
                       ></textarea>
-                      <button
-                        id="btnBrowseFields"
-                        onClick={() => browseFields()}
-                      >
+                      <button id="btnBrowseFields" onClick={() => browseFields()}>
                         Browse Fields
                       </button>
                       <span className="border-notes">
-                        Enter template NAMES separated by commas. This will not
-                        filter; it will only retrieve fields
+                        Enter template NAMES separated by commas. This will not filter; it will only retrieve fields
                       </span>
                     </div>
 
