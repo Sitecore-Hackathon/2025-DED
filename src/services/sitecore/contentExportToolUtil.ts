@@ -1,13 +1,13 @@
 import { GetSearchQuery } from './createGqlQuery';
 import { CreateQueryTemplate, UpdateQueryTemplate } from './updateTemplate.query';
 
-export const GetContentExportResults = (
+export const GenerateContentExport = (
   gqlEndpoint?: string,
   gqlApiKey?: string,
   startItem?: string,
   templates?: string,
   fields?: string
-): void => {
+) => {
   // show loading modal
   const loadingModal = document.getElementById('loading-modal');
   if (loadingModal) {
@@ -90,6 +90,72 @@ export const GetContentExportResults = (
         loadingModal.style.display = 'none';
       }
     });
+};
+
+export const GetContentExportResults = async (
+  gqlEndpoint?: string,
+  gqlApiKey?: string,
+  startItem?: string,
+  templates?: string,
+  fields?: string
+): Promise<any | undefined> => {
+  const query = GetSearchQuery(gqlEndpoint, gqlApiKey, startItem, templates, fields);
+
+  console.log(query);
+
+  if (!gqlEndpoint || !gqlApiKey) {
+    return;
+  }
+
+  const result = await fetch(gqlEndpoint, {
+    method: 'POST',
+    headers: new Headers({ sc_apikey: gqlApiKey, 'content-type': 'application/json' }),
+    body: query,
+  });
+
+  if (result.ok) {
+    const data = await result.json();
+    const results = data.data.pageOne.results;
+    let csvData = [];
+
+    // first row of CSV
+    const fieldStrings = fields?.split(',');
+    let headerRow = 'Item Path,Name,ID,';
+    if (fieldStrings) {
+      for (var i = 0; i < fieldStrings.length; i++) {
+        headerRow += fieldStrings[i].trim() + ',';
+      }
+    }
+    csvData.push(headerRow);
+
+    for (var i = 0; i < results.length; i++) {
+      const result = results[i];
+      let resultRow = result.url.path + ',' + result.name + ',' + result.id + ',';
+
+      if (fieldStrings) {
+        for (var j = 0; j < fieldStrings.length; j++) {
+          const field = fieldStrings[j].trim();
+          const fieldValue = result[field]?.value;
+
+          // Handle undefined or null field values
+          let cleanFieldValue = '';
+          if (fieldValue) {
+            cleanFieldValue = fieldValue.replace(/[\n\r\t]/gm, '');
+            // double quote to escape commas
+            if (cleanFieldValue.indexOf(',') > -1) {
+              cleanFieldValue = '"' + cleanFieldValue + '"';
+            }
+          }
+
+          resultRow += (cleanFieldValue || 'n/a') + ',';
+        }
+      }
+
+      csvData.push(resultRow);
+    }
+
+    return csvData;
+  }
 };
 
 let errorHasBeenDisplayed = false;

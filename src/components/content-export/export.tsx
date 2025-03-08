@@ -1,6 +1,5 @@
 import { IInstance } from '@/models/IInstance';
 import { ISettings } from '@/models/ISettings';
-import { GetContentExportResults } from '@/services/sitecore/contentExportToolUtil';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@radix-ui/react-select';
 import { FC, useEffect, useState } from 'react';
 import { Alert, AlertDescription } from '../ui/alert';
@@ -42,7 +41,7 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
       return;
     }
 
-    GetContentExportResults(activeInstance.graphQlEndpoint, activeInstance.apiToken, startItem, templates, fields);
+    GenerateContentExport(activeInstance.graphQlEndpoint, activeInstance.apiToken, startItem, templates, fields);
   };
 
   useEffect(() => {
