@@ -51,7 +51,7 @@ export default function InstanceSetupPage() {
       templates,
       fields
     );
-    alert(query);
+    console.log(query);
   };
 
   return (
