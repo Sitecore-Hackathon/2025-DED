@@ -94,7 +94,7 @@ _Remove this subsection if your entry does not require any configuration that is
 
 ## Usage instructions
 
-Content Export Usage:
+### Content Export Usage:
 
 1. Follow the In App Configuration section to to configure your instance settings
    ![Instance Configuration](docs/images/instanceconfiguration.png)
