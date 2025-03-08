@@ -48,6 +48,29 @@ Run these steps in PowerShell:
 4. `.\up.ps1`
 5. `start https://xm1cm.localhost`
 
+### Running this Application
+
+You can see the application running by visiting our production instance here: [https://sitecore-content-export.vercel.app](https://sitecore-content-export.vercel.app).
+
+To run the application locally, using Node, run the following commands:
+
+1. Ensure Node.js version 22.13.1 or higher is installed
+   > Using nvm? Run these commands:
+   >
+   > ```bash
+   > nvm install 22.13.1
+   > nvm use 22.13.1
+   > ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the local development server:
+   ```bash
+   npm run dev
+   ```
+4. Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
+
 ⟹ Write a short clear step-wise instruction on how to install your module.
 
 > _A simple well-described installation process is required to win the Hackathon._  
@@ -70,11 +93,32 @@ for example:
 2. ...
 3. profit
 
-### Configuration
+### In App Configuration
+
+If using the production environment (https://sitecore-content-export.vercel.app), or if you've completed the local development server setup, you'll need to configure instances within the app. Think of these as "connections" to your Sitecore instances.
+
+From within the application:
+
+1. On the left hand side of the screen, click the dropdown menu for "Content" and select the `Setup` option. Or go directly to it by visiting [/settings/instance](/settings/instance).
+2. There are two options:
+   - If you are using XM Cloud or already have an access token for the Authoring APIs configured, select the `Add API Token` button.
+     - Once you've clicked the button, select the product, and fill in the fields.
+   - If you are using XP or XM and do not currently have an access token, select the `Generate Token` button and fill in the required fields. If you have done so already, check out the section below on how to set up your Sitecore instance. This will be required to generate the token.
+3. Once you have added atleast one instance, you can now use the `Export Tool` or `Copilot` pages to start working with your content.
+
+### Setting Up Your Sitecore Instance
+
+TODO: Dan drop details on what someone would need to do to connect this app with their own XP/XM instance.
+[ ] - Add Identity Server Configuration Required
+[ ] - Add details on the
+[ ] - You can optionally talk about the `Generate Token` script here
+[ ] - Any cors settings that need to be set up
 
 ⟹ If there are any custom configuration that has to be set manually then remember to add all details here.
 
 _Remove this subsection if your entry does not require any configuration that is not fully covered in the installation instructions already_
+
+<details>
 
 ## Usage instructions
 
@@ -99,7 +143,8 @@ If you'd like to make additional comments that is important for your module entr
 - MUST READ: **[Submission requirements](SUBMISSION_REQUIREMENTS.md)**
 - [Entry form template](ENTRYFORM.md)
 
-### ⟹ [Insert your documentation here](ENTRYFORM.md) <<
+### ⟹ [Insert your documentation here](ENTRYFORM.md)
 
 - Dylan Test Push
 - Dan Test Push
+</details>
