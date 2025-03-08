@@ -1,5 +1,5 @@
-import { GetSearchQuery } from '../services/sitecore/createGqlQuery';
-import { UpdateQueryTemplate } from '../services/sitecore/updateTemplate.query';
+import { GetSearchQuery } from './createGqlQuery';
+import { UpdateQueryTemplate } from './updateTemplate.query';
 
 export const GetContentExportResults = (
   gqlEndpoint?: string,
