@@ -796,7 +796,12 @@ const ContentExportSearchStyles = (): JSX.Element => {
   }
 }
 
-
+input[type="file"] {
+    display: block;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
 
               `}
     </style>
