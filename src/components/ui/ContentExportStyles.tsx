@@ -41,6 +41,19 @@ const ContentExportSearchStyles = (): JSX.Element => {
         margin-bottom: 5px;
     }
 
+    .contentExportTool a {
+        cursor: pointer;
+        color: rgb(38, 148, 192);
+    }
+
+    .contentExportTool select {
+        display: block;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background: white;
+        padding: 6px 8px;
+        }
+
     textarea {
         width: 600px;
         max-width: 100%;

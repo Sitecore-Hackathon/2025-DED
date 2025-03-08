@@ -10,32 +10,30 @@ import {
 } from '@/components/ui/breadcrumb';
 import ContentExportSearchStyles from '@/components/ui/ContentExportStyles';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { enumInstanceType, IInstance } from '@/models/IInstance';
 import { Separator } from '@radix-ui/react-separator';
 import { useState } from 'react';
 import { GetContentExportResults } from '../Util/contentExportToolUtil';
 import { GetAvailableFields } from '../Util/CreateGQLQuery';
 
 export default function InstanceSetupPage() {
+  const [instances, setInstances] = useState<IInstance[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = sessionStorage.getItem('instances');
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+
+  const [activeInstance, setActiveInstance] = useState<IInstance>();
+
   const [configurationOpen, setConfigurationOpen] = useState<boolean>(true);
   const [exportOpen, setExportOpen] = useState<boolean>(true);
-  const [gqlEndpoint, setGqlEndpoint] = useState<string>();
-  const [gqlApiKey, setGqlApiKey] = useState<string>();
   const [startItem, setStartItem] = useState<string>();
   const [templates, setTemplates] = useState<string>();
   const [templateNames, setTemplateNames] = useState<string>();
   const [fields, setFields] = useState<string>();
-  const [idServer, setIdServer] = useState<string>();
-  const [username, setUsername] = useState<string>();
-  const [password, setPassword] = useState<string>();
-  const [clientId, setClientId] = useState<string>();
-  const [clientSecret, setClientSecret] = useState<string>();
 
-  const handleGqlEndpoint = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setGqlEndpoint(event.target.value);
-  };
-  const handleApiKey = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setGqlApiKey(event.target.value);
-  };
   const handleStartItem = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setStartItem(event.target.value);
   };
@@ -48,24 +46,43 @@ export default function InstanceSetupPage() {
   const handleTemplateNames = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTemplateNames(event.target.value);
   };
-  const handleIdentityServer = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setIdServer(event.target.value);
-  };
-  const handleUsername = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setUsername(event.target.value);
-  };
-  const handlePassword = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPassword(event.target.value);
-  };
-  const handleClientId = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setClientId(event.target.value);
-  };
-  const handleClientSecret = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setClientSecret(event.target.value);
+
+  const handleInstanceSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const instanceName = event.target.value;
+    for (var i = 0; i < instances.length; i++) {
+      var instance = instances[i];
+      if (instance.name === instanceName) {
+        setActiveInstance(instance);
+        return;
+      }
+    }
+
+    // no instance selected
+    const emptyInstance: IInstance = {
+      name: '',
+      instanceType: enumInstanceType.xmc,
+      clientId: '',
+      clientSecret: '',
+      graphQlEndpoint: '',
+      apiToken: '',
+      id: '',
+    };
+    setActiveInstance(emptyInstance);
   };
 
   const runExport = () => {
-    const csvData = GetContentExportResults(gqlEndpoint, gqlApiKey, startItem, templates, fields);
+    if (!activeInstance || !activeInstance.name) {
+      alert('Please select an instance. If you do not have any instances, configure one now');
+      return;
+    }
+
+    const csvData = GetContentExportResults(
+      activeInstance.graphQlEndpoint,
+      activeInstance.apiToken,
+      startItem,
+      templates,
+      fields
+    );
 
     // output csvData!
   };
@@ -105,84 +122,44 @@ export default function InstanceSetupPage() {
           <ContentExportSearchStyles />
           <h1 className="text-2xl font-bold">Content Export Tool</h1>
 
-          <div className={'advanced ' + (configurationOpen ? 'open open-default' : '')} id="divConfiguration">
-            <a className="advanced-btn" onClick={() => setConfigurationOpen(!configurationOpen)}>
-              Configuration
-            </a>
-            <div className="advanced-inner">
-              <div className="inner-section">
-                <h3>Configuration</h3>
-                <div className="container">
-                  <b>EXPORT settings:</b>
-                  <div className="row">
-                    <span className="header">GQL Endpoint</span>
-                    <textarea
-                      id="txtGqlEndpoint"
-                      onInput={handleGqlEndpoint}
-                      onChange={handleGqlEndpoint}
-                      placeholder={'e.g. https://edge.sitecorecloud.io/api/graphql/v1'}
-                    />
-                  </div>
-                  <div className="row">
-                    <span className="header">GQL API Key</span>
-                    <textarea
-                      id="txtSCApiKey"
-                      onInput={handleApiKey}
-                      onChange={handleApiKey}
-                      placeholder={'e.g. ALXQKzlpcVJrQX1aNmE1M2RzSHo'}
-                    />
-                  </div>
+          <div className="advanced-inner">
+            <div className="inner-section">
+              <div className="container">
+                <div className="row">
+                  <span className="header">
+                    <h2>
+                      <b>Instance</b>
+                    </h2>
 
-                  <b>IMPORT settings (requires GQL Endpoint above):</b>
-                  <div className="row">
-                    <span className="header">Identity Server URL</span>
-                    <textarea
-                      id="txtIdentityServerUrl"
-                      onInput={handleIdentityServer}
-                      onChange={handleIdentityServer}
-                      placeholder={'e.g. https://id.mysite.com'}
-                    />
-                  </div>
-                  <div className="row">
-                    <span className="header">Sitecore Username</span>
-                    <textarea
-                      id="txtUsername"
-                      onInput={handleUsername}
-                      onChange={handleUsername}
-                      placeholder={'e.g. admin'}
-                    />
-                  </div>
-                  <div className="row">
-                    <span className="header">Sitecore Password</span>
-                    <textarea
-                      id="txtPassword"
-                      onInput={handlePassword}
-                      onChange={handlePassword}
-                      placeholder={'e.g. b'}
-                    />
-                  </div>
-                  <div className="row">
-                    <span className="header">Client ID</span>
-                    <textarea
-                      id="txtClientId"
-                      placeholder={'e.g. SitecoreClient'}
-                      onInput={handleClientId}
-                      onChange={handleClientId}
-                    />
-                  </div>
-                  <div className="row">
-                    <span className="header">Client Secret</span>
-                    <textarea
-                      id="txtClientSecret"
-                      placeholder={'e.g. SitecorePassword'}
-                      onInput={handleClientSecret}
-                      onChange={handleClientSecret}
-                    />
-                  </div>
+                    {instances && instances.length > 0 && (
+                      <>
+                        <select onChange={handleInstanceSelect}>
+                          <option>-- select instance --</option>
+                          {instances.map((instance) => {
+                            return (
+                              <option key={instance.id} value={instance.name}>
+                                {instance.name}
+                              </option>
+                            );
+                          })}
+                        </select>
+                        <br />
+                        <p>
+                          <a href="/settings/instance">Configure instances</a>
+                        </p>
+                      </>
+                    )}
+                    {instances?.length === 0 && (
+                      <p>
+                        No instances configured. <a href="/settings/instance">Configure your instances here</a>
+                      </p>
+                    )}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
+          <br />
 
           <div className={'advanced ' + (exportOpen ? 'open open-default' : '')} id="divConfiguration">
             <a className="advanced-btn" onClick={() => setExportOpen(!exportOpen)}>
