@@ -162,15 +162,15 @@ export const PostMutationQuery = (gqlEndpoint?: string, authToken?: string, csvD
     queries.push(jsonQuery);
   }
 
-  alert('about to run all queries!');
+  Promise.all(queries.map((query) => PostUpdateQuery(gqlEndpoint, authToken, JSON.stringify(query)))).then(
+    (results) => {
+      if (loadingModal) {
+        loadingModal.style.display = 'none';
+      }
 
-  Promise.all(queries.map((query) => PostUpdateQuery(gqlEndpoint, authToken, JSON.stringify(query)))).then((results) =>
-    results.forEach((result) => console.log(result))
+      results.forEach((result) => console.log(result));
+    }
   );
-
-  if (loadingModal) {
-    loadingModal.style.display = 'none';
-  }
 };
 
 export const PostUpdateQuery = (gqlEndpoint: string, authToken: string, jsonQuery: string) => {
@@ -187,5 +187,6 @@ export const PostUpdateQuery = (gqlEndpoint: string, authToken: string, jsonQuer
     })
     .catch((error) => {
       console.error('Error:', error);
+      alert('Something went wrong. Check the console for errors.');
     });
 };
