@@ -12,13 +12,11 @@ The Unicategory
 
 ## Description
 
-⟹ Write a clear description of your hackathon entry.
-
 CONTENT EXPORT TOOL FOR XM CLOUD
 
 The purpose of this module is to enable Sitecore authors (with limited technical ability) to flexibly and easily export content in bulk from Sitecore, using a user friendly UI that enables them to export any configuration of item and fields (no need to write Powershell scripts).
 
-The Content [https://github.com/estockwell-alpert/ContentExportTool](Export Tool), created in 2018, is a .NET Sitecore module that provided these features, but the module is not compatible with XM Cloud since XM Cloud does not allow customizations to the CM file system. This project recreates the Content Export Tool as a standalone Node application that runs in the browser and communicates with the user's XM Cloud or XP instance through the GraphQL API. It also introduces new AI features using Copilot.
+The [Content Export Tool](https://github.com/estockwell-alpert/ContentExportTool), created in 2018, is a .NET Sitecore module that provided these features, but the module is not compatible with XM Cloud since XM Cloud does not allow customizations to the CM file system. This project recreates the Content Export Tool as a standalone Node application that runs in the browser and communicates with the user's XM Cloud or XP instance through the GraphQL API, and introduces new AI features using Copilot.
 
 ## Video link
 
@@ -30,9 +28,7 @@ The Content [https://github.com/estockwell-alpert/ContentExportTool](Export Tool
 
 ⟹ Does your module rely on other Sitecore modules or frameworks?
 
-- List any dependencies
-- Or other modules that must be installed
-- Or services that must be enabled/configured
+No!
 
 _Remove this subsection if your entry does not have any prerequisites other than Sitecore_
 
