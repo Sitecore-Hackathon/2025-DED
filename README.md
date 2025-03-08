@@ -39,7 +39,7 @@ _Remove this subsection if your entry does not have any prerequisites other than
 Run these steps in PowerShell:
 1. `cd docker`
 2. `Set-ExecutionPolicy -Scope Process Bypass`   
-3. `.\compose-init.ps1 -license path\to\your\license.xml`
+3. `.\compose-init.ps1 -LicenseXmlPath path\to\your\license.xml`
 4. `.\up.ps1`
 5. `start https://xm1cm.localhost`
 
