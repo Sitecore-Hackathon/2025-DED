@@ -1,5 +1,5 @@
 import { IInstance } from '@/models/IInstance';
-import { GetContentExportResults } from '@/services/sitecore/contentExportToolUtil';
+import { GenerateContentExport } from '@/services/sitecore/contentExportToolUtil';
 import { GetAvailableFields } from '@/services/sitecore/createGqlQuery';
 import { FC, useState } from 'react';
 import { Alert, AlertDescription } from '../ui/alert';
@@ -38,7 +38,7 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
       return;
     }
 
-    GetContentExportResults(activeInstance.graphQlEndpoint, activeInstance.apiToken, startItem, templates, fields);
+    GenerateContentExport(activeInstance.graphQlEndpoint, activeInstance.apiToken, startItem, templates, fields);
   };
 
   const browseFields = () => {
