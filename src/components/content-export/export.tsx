@@ -1,10 +1,11 @@
 import { IInstance } from '@/models/IInstance';
 import { ISettings } from '@/models/ISettings';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@radix-ui/react-select';
+import { GenerateContentExport } from '@/services/sitecore/contentExportToolUtil';
 import { FC, useEffect, useState } from 'react';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
 import { SaveSettingsModal } from './save-settings-modal';
 
@@ -80,7 +81,7 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
 
   return (
     <>
-      <div className="rounded-lg border bg-card p-6">
+      <Card className="rounded-sm border bg-card p-6 mb-6">
         <div className="space-y-4">
           <div className="container">
             <div className="row">
@@ -92,7 +93,7 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
                     <div className="flex flex-col space-y-4">
                       <Select onValueChange={handleSelectSettings}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select an instance" />
+                          <SelectValue placeholder="Select a Saved Configuration" />
                         </SelectTrigger>
                         <SelectContent>
                           {savedSettings.map((settings) => (
@@ -109,7 +110,7 @@ export const ExportTool: FC<ExportToolProps> = ({ activeInstance, setExportOpen,
             </div>
           </div>
         </div>
-      </div>
+      </Card>
       <Card className="rounded-sm border bg-card p-6">
         <CardHeader>
           <CardTitle>Export Content</CardTitle>
