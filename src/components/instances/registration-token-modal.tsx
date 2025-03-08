@@ -185,8 +185,9 @@ export const RegistrationTokenModal = ({ open, onOpenChange, onSubmit }: Instanc
             </DialogFooter>
 
             <DialogDescription>
-              To create a Content API endpoint, enter a GraphQL content API endpoint e.g.
-              https://mysite.com/sitecore/api/graph/items/master and your{' '}
+              To create a Content API endpoint, enter a GraphQL content API endpoint (e.g.
+              https://mysite.com/sitecore/api/graph/items/master or https://edge.sitecorecloud.io/api/graphql/v1) and
+              your{' '}
               <a
                 href="https://ericastockwellalpert.wordpress.com/2025/02/03/setting-up-the-sitecore-graphql-api-and-playground-in-xp/"
                 target="_blank"
