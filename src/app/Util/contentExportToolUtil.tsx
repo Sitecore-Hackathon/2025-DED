@@ -50,17 +50,17 @@ export const GetContentExportResults = (
           for (var j = 0; j < fieldStrings.length; j++) {
             const field = fieldStrings[j].trim();
             const fieldValue = result[field]?.value;
-            resultRow += (fieldValue ?? 'n/a') + ',';
+            let cleanFieldValue = fieldValue.replace(/[\n\r\t]/gm, '');
+            // double quote to escape commas
+            if (cleanFieldValue.indexOf(',') > -1) {
+              cleanFieldValue = '"' + cleanFieldValue + '"';
+            }
+            resultRow += (cleanFieldValue ?? 'n/a') + ',';
           }
         }
 
         csvData.push(resultRow);
       }
-
-      //let converter = require('json-2-csv');
-      //converter.json2csv(data).then((result: any) => {
-      //  console.log(result);
-      //});
 
       let csvString = '';
       for (let i = 0; i < csvData.length; i++) {
