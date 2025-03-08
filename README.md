@@ -96,7 +96,6 @@ _Remove this subsection if your entry does not require any configuration that is
 
 Content Export Usage:
 
-<details>
 1. Follow the In App Configuration section to to configure your instance settings
 ![Instance Configuration](docs/images/instanceconfiguration.png?raw=true 'Instance Configuration')
 2. Navigate to the Content Export Tool (/Content/Export)
@@ -107,5 +106,3 @@ Content Export Usage:
    - Fields: All of the fields that you want included in the export. Null/invalid fields will return "n/a" in the export, so you can include fields that do not exist on all items
 ![Export Page](docs/images/export.png?raw=true 'Export Page')
 5. Click Run Export and wait for your CSV to download!
-
-</details>
