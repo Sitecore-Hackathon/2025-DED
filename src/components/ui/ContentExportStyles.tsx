@@ -42,7 +42,8 @@ const ContentExportSearchStyles = (): JSX.Element => {
     }
 
     textarea {
-        width: 480px;
+        width: 600px;
+        max-width: 100%;
         background: white;
         border: 1px solid #ccc;
     }

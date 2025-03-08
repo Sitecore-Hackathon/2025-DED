@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Separator } from '@radix-ui/react-separator';
 import { useState } from 'react';
-import { GetGqlQuery } from '../Util/CreateGQLQuery';
+import { GetAvailableFields, GetSearchQuery } from '../Util/CreateGQLQuery';
 
 export default function InstanceSetupPage() {
   const [configurationOpen, setConfigurationOpen] = useState<boolean>(true);
@@ -25,7 +25,13 @@ export default function InstanceSetupPage() {
   const [gqlApiKey, setGqlApiKey] = useState<string>();
   const [startItem, setStartItem] = useState<string>();
   const [templates, setTemplates] = useState<string>();
+  const [templateNames, setTemplateNames] = useState<string>();
   const [fields, setFields] = useState<string>();
+  const [idServer, setIdServer] = useState<string>();
+  const [username, setUsername] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const [clientId, setClientId] = useState<string>();
+  const [clientSecret, setClientSecret] = useState<string>();
 
   const handleGqlEndpoint = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setGqlEndpoint(event.target.value);
@@ -42,9 +48,33 @@ export default function InstanceSetupPage() {
   const handleFields = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setFields(event.target.value);
   };
+  const handleTemplateNames = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setTemplateNames(event.target.value);
+  };
+  const handleIdentityServer = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setIdServer(event.target.value);
+  };
+  const handleUsername = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setUsername(event.target.value);
+  };
+  const handlePassword = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setPassword(event.target.value);
+  };
+  const handleClientId = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setClientId(event.target.value);
+  };
+  const handleClientSecret = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setClientSecret(event.target.value);
+  };
 
   const runExport = () => {
-    const query = GetGqlQuery(
+    const query = GetSearchQuery(
       gqlEndpoint,
       gqlApiKey,
       startItem,
@@ -52,6 +82,17 @@ export default function InstanceSetupPage() {
       fields
     );
     console.log(query);
+  };
+
+  const browseFields = () => {
+    if (!templateNames) {
+      alert(
+        'Enter Template Names (below the Fields input) to get available fields'
+      );
+      return;
+    }
+    const queries = GetAvailableFields(templateNames);
+    console.log(queries);
   };
 
   return (
@@ -106,6 +147,9 @@ export default function InstanceSetupPage() {
                       id="txtGqlEndpoint"
                       onInput={handleGqlEndpoint}
                       onChange={handleGqlEndpoint}
+                      placeholder={
+                        'e.g. https://edge.sitecorecloud.io/api/graphql/v1'
+                      }
                     />
                   </div>
                   <div className="row">
@@ -114,29 +158,55 @@ export default function InstanceSetupPage() {
                       id="txtSCApiKey"
                       onInput={handleApiKey}
                       onChange={handleApiKey}
+                      placeholder={'e.g. ALXQKzlpcVJrQX1aNmE1M2RzSHo'}
                     />
                   </div>
 
                   <b>IMPORT settings (requires GQL Endpoint above):</b>
                   <div className="row">
                     <span className="header">Identity Server URL</span>
-                    <textarea id="txtIdentityServerUrl" />
+                    <textarea
+                      id="txtIdentityServerUrl"
+                      onInput={handleIdentityServer}
+                      onChange={handleIdentityServer}
+                      placeholder={'e.g. https://id.mysite.com'}
+                    />
                   </div>
                   <div className="row">
                     <span className="header">Sitecore Username</span>
-                    <textarea id="txtUsername" />
+                    <textarea
+                      id="txtUsername"
+                      onInput={handleUsername}
+                      onChange={handleUsername}
+                      placeholder={'e.g. admin'}
+                    />
                   </div>
                   <div className="row">
                     <span className="header">Sitecore Password</span>
-                    <textarea id="txtPassword" />
+                    <textarea
+                      id="txtPassword"
+                      onInput={handlePassword}
+                      onChange={handlePassword}
+                      placeholder={'e.g. b'}
+                    />
                   </div>
                   <div className="row">
                     <span className="header">Client ID</span>
-                    <textarea id="txtClientId" />
+                    <textarea
+                      id="txtClientId"
+                      placeholder={'e.g. SitecoreClient'}
+                      onInput={handleClientId}
+                      onChange={handleClientId}
+                    />
                   </div>
                   <div className="row">
                     <span className="header">Client Secret</span>
-                    <textarea id="txtClientSecret" />
+                    <textarea
+                      id="txtClientSecret"
+                      placeholder={'e.g. SitecorePassword'}
+                      onInput={handleClientSecret}
+                      onChange={handleClientSecret}
+                    />
                   </div>
                 </div>
               </div>
@@ -159,16 +229,18 @@ export default function InstanceSetupPage() {
                 <div className="container">
                   <div className="row">
                     <span className="header" id="startitems">
-                      Start Item(s)
+                      <b>Start Item(s)</b>
                     </span>
                     <a className="clear-btn" data-id="inputStartitem">
                       clear
                     </a>
                     <textarea
-                      placeholder="Start Item ID(s)"
                       id="inputStartitem"
                       onInput={handleStartItem}
                       onChange={handleStartItem}
+                      placeholder={
+                        'e.g. {D4D93D21-A8B4-4C0F-8025-251A38D9A04D}, {2745F1E8-1B06-4B08-9628-DEAE336F64F6}'
+                      }
                     />
                     <span className="border-notes">
                       Enter the ID of each starting node separated by commas
@@ -191,6 +263,9 @@ export default function InstanceSetupPage() {
                       id="inputTemplates"
                       onInput={handleTemplates}
                       onChange={handleTemplates}
+                      placeholder={
+                        'e.g. {CC92A3D8-105C-4016-8BD7-22162C1ED919}, {8C80272B-1910-4F3D-9A78-27012F04CEB0}'
+                      }
                     ></textarea>
                     <span className="border-notes">
                       Enter template IDs separated by commas (MUST BE GUIDs)
@@ -210,7 +285,9 @@ export default function InstanceSetupPage() {
                   </div>
 
                   <div className="row">
-                    <span className="header">Fields</span>
+                    <span className="header">
+                      <b>Fields</b>
+                    </span>
                     <a className="clear-btn" data-id="inputFields">
                       clear
                     </a>
@@ -220,35 +297,39 @@ export default function InstanceSetupPage() {
                       rows={5}
                       onInput={handleFields}
                       onChange={handleFields}
+                      placeholder={'e.g. title, image, taxonomies'}
                     ></textarea>
-
-                    <button
-                      id="btnBrowseFields"
-                      //onClick={() => alert('click!')}
-                    >
-                      Browse Fields
-                    </button>
 
                     <span className="border-notes">
                       Enter field names separated by commas.
                     </span>
 
                     <div className="">
-                      <input type="checkbox" id="chkAllFields"></input>
-                      <span className="notes">
-                        <b>All Fields</b> - This will export the values of{' '}
-                        <b>all fields</b> of every included item.{' '}
-                        <b>
-                          Note that this requires the Template names to be
-                          entered below
-                        </b>
-                      </span>{' '}
                       <br />
+                      <br />
+                      <span className="header">
+                        <b>
+                          Browse Fields - input template names below, then click
+                          button to see available fields
+                        </b>
+                      </span>
+                      <span className="header">
+                        Template Names (for browse):
+                      </span>
                       <textarea
                         id="txtFieldTemplates"
                         cols={60}
                         rows={5}
+                        onInput={handleTemplateNames}
+                        onChange={handleTemplateNames}
+                        placeholder={'e.g. Person, Whitepaper, LandingPage'}
                       ></textarea>
+                      <button
+                        id="btnBrowseFields"
+                        onClick={() => browseFields()}
+                      >
+                        Browse Fields
+                      </button>
                       <span className="border-notes">
                         Enter template NAMES separated by commas. This will not
                         filter; it will only retrieve fields
