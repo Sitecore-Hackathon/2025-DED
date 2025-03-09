@@ -43,7 +43,7 @@ export default function Home() {
             </Breadcrumb>
           </div>
         </header>
-        <div className="container mx-auto py-6">
+        <div className="container mx-auto py-6 px-4 md:px-6">
           <h2 className="text-lg font-semibold mb-4">Dashboard</h2>
           {instances ? (
             <>
