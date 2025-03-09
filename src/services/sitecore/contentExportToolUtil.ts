@@ -37,6 +37,10 @@ export const GenerateContentExport = (
       let headerRow = 'Item Path,Name,ID,';
       if (fieldStrings) {
         for (var i = 0; i < fieldStrings.length; i++) {
+          if (fieldStrings[i].trim() === '') {
+            continue;
+          }
+
           headerRow += fieldStrings[i].trim() + ',';
         }
       }
@@ -50,6 +54,11 @@ export const GenerateContentExport = (
         if (fieldStrings) {
           for (var j = 0; j < fieldStrings.length; j++) {
             const field = fieldStrings[j].trim();
+
+            if (fieldStrings[j].trim() === '') {
+              continue;
+            }
+
             const fieldValue = result[field]?.value ?? 'n/a';
 
             let cleanFieldValue = fieldValue.replace(/[\n\r\t]/gm, '').replace(/"/g, '\\"');
