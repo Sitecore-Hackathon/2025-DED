@@ -61,7 +61,7 @@ const data = {
     },
     {
       title: 'Documentation',
-      url: 'https://github.com/Sitecore-Hackathon/2025-DED',
+      url: 'https://github.com/Sitecore-Hackathon/2025-DED#sitecore-hackathon-2025',
       icon: BookOpen,
     },
   ],

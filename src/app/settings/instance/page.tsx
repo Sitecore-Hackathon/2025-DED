@@ -14,7 +14,8 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { IInstance } from '@/models/IInstance';
+import { enumInstanceType, IInstance } from '@/models/IInstance';
+import { getXmCloudToken } from '@/services/sitecore/getXmCloudToken';
 import { Separator } from '@radix-ui/react-separator';
 import { PlusCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -37,15 +38,30 @@ export default function InstanceSetupPage() {
   const [isGenModalOpen, setIsGenModalOpen] = useState(false);
   const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
 
-  const handleAddInstance = (newInstance: Omit<IInstance, 'id'>) => {
-    const instance: IInstance = {
-      ...newInstance,
-      id: crypto.randomUUID(),
-    };
+  const handleAddInstance = async (newInstance: Omit<IInstance, 'id'>) => {
+    try {
+      if (newInstance.instanceType === enumInstanceType.xmc) {
+        const tokenResponse = await getXmCloudToken(newInstance.clientId as string, newInstance.clientSecret as string);
 
-    const updatedInstances = [...instances, instance];
-    setInstances(updatedInstances);
-    sessionStorage.setItem('instances', JSON.stringify(updatedInstances));
+        newInstance.apiToken = tokenResponse.access_token;
+
+        // Store token expiration if needed
+        newInstance.expiration = new Date(Date.now() + tokenResponse.expires_in * 1000).toISOString();
+      }
+
+      const instance: IInstance = {
+        ...newInstance,
+        id: crypto.randomUUID(),
+      };
+
+      const updatedInstances = [...instances, instance];
+      setInstances(updatedInstances);
+      sessionStorage.setItem('instances', JSON.stringify(updatedInstances));
+      setIsTokenModalOpen(false);
+      setIsGenModalOpen(false);
+    } catch (error) {
+      console.error('Error adding instance:', error);
+    }
   };
 
   const handleDeleteInstance = (id: string) => {
