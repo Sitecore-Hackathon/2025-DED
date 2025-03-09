@@ -50,12 +50,14 @@ export const GenerateContentExport = (
         if (fieldStrings) {
           for (var j = 0; j < fieldStrings.length; j++) {
             const field = fieldStrings[j].trim();
-            const fieldValue = result[field]?.value;
-            let cleanFieldValue = fieldValue.replace(/[\n\r\t]/gm, '');
+            const fieldValue = result[field]?.value ?? 'n/a';
+
+            let cleanFieldValue = fieldValue.replace(/[\n\r\t]/gm, '').replace(/"/g, '\\"');
             // double quote to escape commas
             if (cleanFieldValue.indexOf(',') > -1) {
               cleanFieldValue = '"' + cleanFieldValue + '"';
             }
+
             resultRow += (cleanFieldValue ?? 'n/a') + ',';
           }
         }
@@ -67,8 +69,6 @@ export const GenerateContentExport = (
       for (let i = 0; i < csvData.length; i++) {
         csvString += csvData[i] + '\n';
       }
-
-      console.log(csvString);
 
       const element = document.createElement('a');
       const file = new Blob([csvString], { type: 'text/csv' });

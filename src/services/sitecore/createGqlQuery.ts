@@ -48,7 +48,13 @@ export const GetSearchQuery = (
     var fieldStrings = fields.split(',');
     for (var i = 0; i < fieldStrings.length; i++) {
       const field = fieldStrings[i].trim();
-      if (field === 'id' || field === 'name' || field === 'url') {
+      if (
+        field.toLocaleLowerCase() === 'id' ||
+        field.toLocaleLowerCase() === 'name' ||
+        field.toLocaleLowerCase() === 'url' ||
+        field.toLocaleLowerCase() === 'item name' ||
+        field === ''
+      ) {
         continue;
       }
 
@@ -66,6 +72,8 @@ export const GetSearchQuery = (
   const query = SearchQueryTemplate.replace('pathsFragment', pathFragment)
     .replace('templatesFragment', templateFragment)
     .replace('fieldsFragment', fieldsFragment);
+
+  console.log(query);
 
   const jsonQuery = {
     query: query,
