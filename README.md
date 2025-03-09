@@ -25,6 +25,8 @@ The [Content Export Tool](https://github.com/estockwell-alpert/ContentExportTool
 ## Pre-requisites and Dependencies
 
 - Docker Desktop
+- Node version 22.13.1 or higher
+- A Sitecore instance with an available GraphQL endpoint (or use the Edge service)
 
 ## Installation instructions
 
@@ -126,6 +128,16 @@ Example files:
 7. Click Import
 8. The post requests to the authoring API do not currently work due to a CORS error, but you can see the generated GraphQL queries in the Console
    ![Import Page](https://github.com/Sitecore-Hackathon/2025-DED/blob/main/docs/images/Import.png)
+
+### Copilot:
+
+This service is similar to the export tool but uses AI with Gen AI Function Calling to parse together the correct parameters for the function. To use this feature, you must have the following configured:
+
+- An OpenAI API Key
+  - Add this key to the API Tokens page within the App (currently the app only supports OpenAI)
+- A connection to Edge or a Sitecore content delivery environment
+
+Once you are on the Copilot page (https://sitecore-content-export.vercel.app/content/copilot), you can select the instance you want to work with, the model from OpenAI that you want to use, and then the prompt you want to use to interact with the AI assistant. There are also shortcut buttons to enable specific commands to get to a specific point in the process with the Content assistant. Follow along with the prompts to get the content you need and convert that content into specific formats.
 
 ## Known Bugs and Next Steps
 
