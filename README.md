@@ -76,7 +76,7 @@ the customizations to identity server are useful, and the CORS isssue is of inte
 2. `.\compose-init.ps1 -LicenseXmlPath C:\path\to\license.xml` (Note: This saves license details to `.env.user` which is excluded from Git to prevent accidental commits.)
 3. `up.ps1` (Or run `docker compose --env-file .\.env --env-file .\.env.user up -d`. Multiple ENV references are only needed when building the containers, so that secrets are assigned from `.env.user`. For other commands, `docker compose` will work fine, e.g. `docker compose ps cm`.)
 
-#### DOcker Customization Notes
+#### Docker Customization Notes
 
 1. The CM image includes SXA, Headless Services, and Management Services, to support GraphQL and command line functionality. In addition, the
    content GraphQL endpoint has been enabled via a mounted `deploy` folder.
@@ -84,7 +84,7 @@ the customizations to identity server are useful, and the CORS isssue is of inte
 
 #### CORS Issue
 
-In attempting to build a local demo environment, we were unable to create an API key that returns a configured CORS header, as [docuemnted](https://doc.sitecore.com/xp/en/developers/104/sitecore-experience-manager/cross-origin-resource-sharing--cors-.html#using-an-api-key) by
+In attempting to build a local demo environment, we were unable to create an API key that returns a configured CORS header, as [documented](https://doc.sitecore.com/xp/en/developers/104/sitecore-experience-manager/cross-origin-resource-sharing--cors-.html#using-an-api-key) by
 Sitecore. We will open a Support ticket to report this issue. Since the application returned `Access-Control-Allow-Origin: *` for all requests, including ones with the `sc_apikey` variable, browser security behavior prevented the application working with our local instance. We did not
 encounter this issue working with other environements (PaSS and XMC), so this might be a local configuration issue.
 
