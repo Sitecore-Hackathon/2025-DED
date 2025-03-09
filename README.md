@@ -67,15 +67,26 @@ To run the application locally, using Node, run the following commands:
 
 ### Setting Up Your Sitecore Instance
 
-TODO: Dan drop details on what someone would need to do to connect this app with their own XP/XM instance.
-[ ] - Add Identity Server Configuration Required
-[ ] - Add details on the
-[ ] - You can optionally talk about the `Generate Token` script here
-[ ] - Any cors settings that need to be set up
+Note: We created a Dockerized environment that enables GraphQL authentication, but ran into an issue with CORS configuration, which we will describe in more detail below. Currently exercising this tool requires a PASS or XMC instance. However, we are including these setup steps as
+the customizations to identity server are useful, and the CORS isssue is of interest.
 
-⟹ If there are any custom configuration that has to be set manually then remember to add all details here.
+#### Docker Setup
 
-_Remove this subsection if your entry does not require any configuration that is not fully covered in the installation instructions already_
+1. cd `docker`
+2. `.\compose-init.ps1 -LicenseXmlPath C:\path\to\license.xml` (Note: This saves license details to `.env.user` which is excluded from Git to prevent accidental commits.)
+3. `up.ps1` (Or run `docker compose --env-file .\.env --env-file .\.env.user up -d`. Multiple ENV references are only needed when building the containers, so that secrets are assigned from `.env.user`. For other commands, `docker compose` will work fine, e.g. `docker compose ps cm`.)
+
+#### DOcker Customization Notes
+
+1. The CM image includes SXA, Headless Services, and Management Services, to support GraphQL and command line functionality. In addition, the
+   content GraphQL endpoint has been enabled via a mounted `deploy` folder.
+2. The Sitecore Identity role has been customized as descibed in this [blog post](http://www.dansolovay.com/2023/01/using-postman-to-authenticate-to-graphql.html) to enable generating Authoroing and Management GraphQL authentication tokens. The small reference scripts [Get-Token.ps1](./docker/Get-Token.ps1) and [Get-HomeId.ps1](./docker/Get-HomeId.ps1) serve as references for how to generate and use tokens provided by this customization.
+
+#### CORS Issue
+
+In attempting to build a local demo environment, we were unable to create an API key that returns a configured CORS header, as [docuemnted](https://doc.sitecore.com/xp/en/developers/104/sitecore-experience-manager/cross-origin-resource-sharing--cors-.html#using-an-api-key) by
+Sitecore. We will open a Support ticket to report this issue. Since the application returned `Access-Control-Allow-Origin: *` for all requests, including ones with the `sc_apikey` variable, browser security behavior prevented the application working with our local instance. We did not
+encounter this issue working with other environements (PaSS and XMC), so this might be a local configuration issue.
 
 ## Using the Application
 
