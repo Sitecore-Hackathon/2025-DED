@@ -1,3 +1,4 @@
+import { enumInstanceType } from '@/models/IInstance';
 import { GetSearchQuery } from './createGqlQuery';
 import { CreateQueryTemplate, UpdateQueryTemplate } from './updateTemplate.query';
 
@@ -102,6 +103,7 @@ export const GenerateContentExport = (
 };
 
 export const GetContentExportResults = async (
+  instanceType: enumInstanceType,
   gqlEndpoint?: string,
   gqlApiKey?: string,
   startItem?: string,
@@ -116,14 +118,22 @@ export const GetContentExportResults = async (
     return;
   }
 
+  let headers = undefined;
+  if (instanceType === enumInstanceType.xmc) {
+    headers = new Headers({ Authorization: 'Bearer ' + gqlApiKey, 'content-type': 'application/json' });
+  } else {
+    headers = new Headers({ sc_apikey: gqlApiKey, 'content-type': 'application/json' });
+  }
+
   const result = await fetch(gqlEndpoint, {
     method: 'POST',
-    headers: new Headers({ sc_apikey: gqlApiKey, 'content-type': 'application/json' }),
+    headers: headers,
     body: query,
   });
 
   if (result.ok) {
     const data = await result.json();
+    console.log('data', data);
     const results = data.data.pageOne.results;
     let csvData = [];
 

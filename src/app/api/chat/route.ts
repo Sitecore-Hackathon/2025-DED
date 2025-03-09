@@ -64,6 +64,7 @@ export async function POST(req: Request) {
             }
 
             const fnResult = await GetContentExportResults(
+              instanceData.instanceType,
               instanceData.graphQlEndpoint,
               instanceData.apiToken,
               startItem,

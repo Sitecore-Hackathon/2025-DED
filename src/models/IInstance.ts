@@ -6,6 +6,7 @@ export interface IInstance {
   clientId?: string;
   clientSecret?: string;
   instanceType: enumInstanceType;
+  expiration?: string;
 }
 
 export enum enumInstanceType {

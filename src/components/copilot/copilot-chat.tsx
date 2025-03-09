@@ -33,6 +33,8 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
     },
   });
 
+  console.log('messages', messages);
+
   // Reference to the messages div for scrolling
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -42,12 +44,10 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Effect to scroll to bottom when messages change
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  // Auto-resize textarea based on content
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -63,7 +63,6 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
   };
 
   useEffect(() => {
-    // Add welcome message if no messages exist
     if (messages.length === 0) {
       setMessages([
         {
@@ -133,7 +132,6 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
         </div>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col overflow-hidden p-0">
-        {/* Messages container with fixed height and scrolling */}
         <div className="flex-1 overflow-hidden relative">
           <ScrollArea className="h-full w-full pr-1">
             <div className="flex flex-col gap-4 p-4">
@@ -224,10 +222,8 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ instances, token }) =>
           </ScrollArea>
         </div>
 
-        {/* Input form with fixed position at bottom */}
         <div className="border-t border-border mt-auto">
           <form onSubmit={handleSubmit} className="p-4 space-y-3 bg-background">
-            {/* Preset message buttons */}
             <div className="flex flex-wrap gap-2">
               {presetMessages.map((preset, index) => (
                 <Button
