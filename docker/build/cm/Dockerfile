@@ -32,12 +32,6 @@ RUN C:\module\tools\Initialize-Content.ps1 -TargetPath .\; `
 # Copy development tools and entrypoint
 COPY --from=tooling \tools\ \tools\
 
-# Copy role transforms
-COPY .\transforms\ \transforms\role\
-
-# Perform role transforms
-RUN C:\tools\scripts\Invoke-XdtTransform.ps1 -Path .\ -XdtPath C:\transforms\role
-
 # Add CLI tools
 COPY --from=cli C:\module\cm\content C:\inetpub\wwwroot
 
@@ -49,3 +43,10 @@ RUN C:\module\tools\Initialize-Content.ps1 -TargetPath C:\inetpub\wwwroot; `
 
 # Management services
 COPY --from=mgsv C:\module\cm\content C:\inetpub\wwwroot
+
+
+# Copy role transforms
+COPY .\transforms\ \transforms\role\
+
+# Perform role transforms
+RUN C:\tools\scripts\Invoke-XdtTransform.ps1 -Path .\ -XdtPath C:\transforms\role
